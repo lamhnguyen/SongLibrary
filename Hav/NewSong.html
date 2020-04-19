@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+	<nav class="navbar navbar-expand-xl navbar-light bg-light sticky-top">
+	</nav>
+	<div class="container pt-3">
+		<div class="ct-box">
+			<h3>Thêm bài hát mới</h3>
+			<form role="form" method="post" action="insert">
+				<div class="row p-right">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="title1">Tên bài hát (*)</label>
+							<input type="text" name="title1" value="" autocomplete="off" id="title1" class="form-control title" required />
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="title2">Tên khác</label>
+							<input type="text" name="title2" id="title2" class="form-control" />
+						</div>
+					</div>
+				</div>
+				<div class="row p-right">
+					<div class="col-md-12">
+					</div>
+				</div>
+<div class="row p-right">
+<div class="col-md-3">
+<div class="form-group">
+<label for="composer1">Nhạc sĩ 1</label>
+<input type="text" name="composer1" id="composer1" autocomplete="off" class="form-control author" />
+<span class="help-block"><em>Nhạc sĩ sáng tác ca khúc</em></span>
+</div>
+</div>
+<div class="col-md-3">
+<div class="form-group">
+<label for="composer2">Nhạc sĩ 2</label>
+<input type="text" name="composer2" id="composer2" autocomplete="off" class="form-control author" />
+<span class="help-block"><em>Nhạc sĩ khác cùng sáng tác</em></span>
+</div>
+</div>
+<div class="col-md-3">
+<div class="form-group">
+<label for="composer3">Tác giả thơ</label>
+<input type="text" name="composer3" id="composer3" autocomplete="off" class="form-control author" />
+<span class="help-block"><em>Tên tác giả thơ (nếu có)</em></span>
+</div>
+</div>
+<div class="col-md-3">
+<div class="form-group">
+<label for="composer4">Lời Việt</label>
+<input type="text" name="composer4" id="composer4" autocomplete="off" class="form-control author" />
+<span class="help-block"><em>Đối với nhạc Ngoại</em></span>
+</div>
+</div>
+</div>
+<div class="row p-right">
+<div class="col-md-4">
+<div class="form-group">
+<label for="category">Thể loại</label>
+<select name="category" class="form-control">
+<option value="1">Nhạc Vàng</option>
+<option value="2">Nhạc Trữ tình</option>
+<option value="3" selected>Nhạc Trẻ</option>
+<option value="4">Nhạc Quê hương</option>
+<option value="5">Nhạc Ngoại lời Việt</option>
+<option value="6">Nhạc Đỏ</option>
+<option value="7">Nhạc Dân ca</option>
+<option value="8">Nhạc Quốc tế</option>
+<option value="9">Nhạc Học trò</option>
+<option value="10">Nhạc Thiếu nhi</option>
+<option value="11">Nhạc Thánh ca</option>
+<option value="12">Nhạc Phật giáo</option>
+<option value="13">Nhạc Chế - Vui</option>
+</select>
+</div>
+</div>
+<div class="col-md-4">
+<div class="form-group">
+<label for="year">Năm sáng tác (nếu biết)</label>
+<input type="text" name="year" id="year" class="form-control" />
+</div>
+</div>
+<div class="col-md-4">
+<div class="form-group">
+<label for="tone">Tone chủ bài hát</label>
+<input type="text" name="tone" id="tone" class="form-control" />
+</div>
+</div>
+</div>
+<div class="row p-right">
+<div class="col-md-12">
+</div>
+</div>
+<div class="form-group">
+<label for="lyric">Lời và hợp âm (*)</label>
+<textarea rows="10" cols="3" name="lyric" id="lyric" class="form-control" required></textarea>
+<span class="help-block"><em>Hợp âm phải bỏ trong dấu ngoặc vuông []</em></span>
+</div>
+<input type="hidden" name="status" value="2" />
+<input type="hidden" name="check" value="0" />
+<input type="submit" name="submit" value="Đăng bài" class="btn btn-primary" />
+</form>
+<script>
+	$.get("/ajax/autocomplete_composer", function(data){
+  		$(".author").typeahead({ source:data, autoSelect: false });
+	},'json');
+
+	$.get("/ajax/autocomplete_song", function(data){
+  		$(".title").typeahead({ source:data, autoSelect: false });
+	},'json');
+
+    window.setTimeout(function() {
+	    $(".alert-message").fadeTo(500, 0).slideUp(500, function(){
+	        $(this).remove();
+	    });
+	}, 5000);
+
+
+</script>
+</div>
+﻿
+</div>
+<div class="footer">
+<div class="container">
+<div class="row">
+<div class="col-md-12">
+<div class="float-left">
+&copy; 2014 - 2020 <a href="https://hopamviet.vn/">hopamviet.vn</a> /
+<a href="/about">Giới thiệu</a> /
+<a href="/contact">Liên hệ</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="https://hopamviet.vn/assets/js/comment.js"></script>
+<script>
+		$(document).ready(function() {
+			$('#rhythm').editable({
+			prepend: "Chưa chọn",
+		        source: [
+		        	  {value: 6, text: 'Ballade'},
+		        	  {value: 5, text: 'Blues'},
+		              {value: 1, text: 'Boléro'},
+		              {value: 15, text: 'Bossa Nova'},
+		              {value: 11, text: 'Boston'},
+		              {value: 7, text: 'Chachacha'},
+		              {value: 8, text: 'Disco'},
+		              {value: 12, text: 'Fox'},
+		              {value: 17, text: 'Habanera'},
+		              {value: 19, text: 'March'},
+		              {value: 20, text: 'Pasodoble'},
+		              {value: 16, text: 'Pop'},
+		              {value: 22, text: 'Rap'},
+		              {value: 9, text: 'Rhumba'},
+		              {value: 13, text: 'Rock'},
+		              {value: 23, text: 'Samba'},
+		              {value: 2, text: 'Slow'},
+		              {value: 21, text: 'Slow Ballad'},
+		              {value: 3, text: 'Slow Rock'},
+		              {value: 4, text: 'Slow Surf'},
+		              {value: 10, text: 'Tango'},
+		              {value: 18, text: 'Twist'},
+		              {value: 14, text: 'Valse'},
+
+		           ]
+		});
+
+		});
+
+	</script>
+</body>
+</html>

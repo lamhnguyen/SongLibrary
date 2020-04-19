@@ -2,22 +2,28 @@ import React from "react";
 import { Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Header from "./common/Header";
+import "./common/FontAwesome";
+import Header from "./header/Header";
+import Footer from "./footer/Footer";
 import PageNotFound from "./PageNotFound";
 import HomePage from "./home/HomePage";
 import AboutPage from "./about/AboutPage";
 
 function App() {
   return (
-    <div className="container-fluid">
+    <>
       <Header />
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route path="/about" component={AboutPage} />
-        <Route component={PageNotFound} />
-      </Switch>
-      <ToastContainer autoClose={3000} hideProgressBar />
-    </div>
+      <div className="container pt-3">
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route path="/about" component={AboutPage} />
+          <Route component={PageNotFound} />
+        </Switch>
+
+        <ToastContainer autoClose={3000} hideProgressBar />
+      </div>
+      <Footer />
+    </>
   );
 }
 
