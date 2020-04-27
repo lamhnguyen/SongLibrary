@@ -9,6 +9,8 @@ import "./index.css";
 
 const store = configureStore();
 
+// console.log(store.getState());
+
 render(
   <ReduxProvider store={store}>
     <Router>

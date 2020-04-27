@@ -31,7 +31,9 @@
 | react-toastify   | Display messages to the user                         |
 | redux            | Library for unidirectional data flows                |
 | redux-thunk      | Async redux library                                  |
+| redux-logger     | Log actions                                          |
 | reselect         | Memoize selectors for performance                    |
+| Font Awesome     | Vector icons                                         |
 
 ### Development Dependencies
 

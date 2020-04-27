@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const HomePage = () => (
   <div className="container">
@@ -14,6 +15,9 @@ const HomePage = () => (
         Recent
       </button>
       <button type="button" className="btn btn-outline-danger btn-sm mr-1">
+        Like
+      </button>
+      <button type="button" className="btn btn-outline-warning btn-sm mr-1">
         Random
       </button>
     </div>
@@ -22,10 +26,23 @@ const HomePage = () => (
         <table className="table table-striped table-bordered table-hover">
           <thead>
             <tr>
-              <th style={{ width: "55%" }}>Name</th>
-              <th style={{ width: "20%" }}>Authors</th>
-              <th style={{ width: "20%" }}>Performers</th>
-              <th style={{ width: "5%" }}>Views</th>
+              <th style={{ width: "50%" }}>
+                Name <FontAwesomeIcon icon="sort" />
+              </th>
+              <th style={{ width: "15%" }}>
+                Authors <FontAwesomeIcon icon="sort" />
+              </th>
+              <th style={{ width: "15%" }}>
+                Artists <FontAwesomeIcon icon="sort" />
+              </th>
+              <th style={{ width: "7%" }}>
+                <FontAwesomeIcon icon="thumbs-up" />{" "}
+                <FontAwesomeIcon icon="sort" />
+              </th>
+              <th style={{ width: "7%" }}>
+                <FontAwesomeIcon icon="eye" /> <FontAwesomeIcon icon="sort" />
+              </th>
+              <th style={{ width: "7%" }} />
             </tr>
           </thead>
           <tbody>
@@ -44,7 +61,16 @@ const HomePage = () => (
                 <Link to="#">Phạm Trọng Cầu</Link>,{" "}
                 <Link to="#">Tuấn Dũng</Link>
               </td>
+              <td>1523</td>
               <td>58909</td>
+              <td>
+                <a className="edit" title="Edit" data-toggle="tooltip">
+                  <FontAwesomeIcon icon="edit" color="#5cb85c" />
+                </a>{" "}
+                <a className="delete" title="Delete" data-toggle="tooltip">
+                  <FontAwesomeIcon icon="trash" color="#d9534f" />
+                </a>
+              </td>
             </tr>
             <tr>
               <td>
@@ -60,7 +86,16 @@ const HomePage = () => (
               <td>
                 <Link to="#">Hồ Quỳnh Hương</Link>
               </td>
+              <td>1523</td>
               <td>35690</td>
+              <td>
+                <a className="edit" title="Edit" data-toggle="tooltip">
+                  <FontAwesomeIcon icon="edit" color="#5cb85c" />
+                </a>{" "}
+                <a className="delete" title="Delete" data-toggle="tooltip">
+                  <FontAwesomeIcon icon="trash" color="#d9534f" />
+                </a>
+              </td>
             </tr>
           </tbody>
         </table>
