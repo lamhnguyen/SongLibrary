@@ -40,7 +40,6 @@ ErrorBoundary.propTypes = {
     PropTypes.node,
     PropTypes.arrayOf(PropTypes.node),
   ]).isRequired,
-  render: PropTypes.func.isRequired,
 };
 
 export default ErrorBoundary;

@@ -1,3 +1,4 @@
+import { attempt } from "lodash";
 export const errorToString = (error) => {
   var errMsg = error.message || error;
 
@@ -11,3 +12,11 @@ export const errorToString = (error) => {
 export const throwErrorRandomly = () => {
   if (Math.random() > 0.5) throw new Error("Boom!");
 };
+
+export const toNumber = (value, defaultValue) => {
+  return isNaN(parseInt(value)) ? defaultValue : parseInt(value);
+};
+
+function parseJson(str) {
+  return attempt(JSON.parse.bind(null, str));
+}

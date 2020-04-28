@@ -1,60 +1,63 @@
+function createDate(days) {
+  const dt = new Date();
+  dt.setDate(dt.getDate() + days);
+  return dt;
+}
+
 const songs = [
   {
     id: 1,
     name: "Hãy yêu như chưa yêu lần nào",
     slug: "hay-yeu-nhu-chua-yeu-lan-nao",
-    genre: { id: 16, name: "Slow" },
-    key: { id: 1, name: "C" },
-    authors: [{ id: 3, name: "Lê Hựu Hà", slug: "le-huu-ha" }],
-    poets: [],
-    artists: [
-      { id: 2, name: "Ngọc Lan", slug: "ngoc-lan" },
-      { id: 1, name: "Vũ Khanh", slug: "vu-khanh" },
-    ],
+    genreId: 16,
+    keyId: 1,
+    authorIds: [3],
+    poetIds: [],
+    artistIds: [2, 1],
     preview:
       "1. Hỡi em [C] yêu xin em đừng [Am] buồn Có đôi [Dm] khi em hay giận [G7] hờn Để cho [C] em quên đi ngày [Am] dài Với bao [D7] đêm suy tư miệt [G7] mài. Mắt môi [C]",
     lyrics:
       "1. Hỡi em [C] yêu xin em đừng [Am] buồn\nCó đôi [Dm] khi em hay giận [G7] hờn\nĐể cho [C] em quên đi ngày [Am] dài\nVới bao [D7] đêm suy tư miệt [G7] mài.\n\nMắt môi [C] đây xin em đừng [Am] chờ\nChiếc hôn [Dm] kia mong em từng [G7] giờ\nNgón tay [C] kia xin chớ hững [Am] hờ\nDắt em [G7] đi về trong đợi [C] chờ\n\nĐK: Biết bao [Em] ngày đã [F] qua,\nBiết bao [Dm] chiều xót [G7] xa.\nNgồi [C] đếm những giọt [Am] nắng,\nRơi [Fm] rụng trước mái hiên [C] nhà.\nNgười [Bb] sao chưa đến với [F] ta,\nTình [Fm] sao chưa thấy ghé [C] qua.\nDù con [A] tim vẫn thiết [Dm] tha,\nMộng xưa [G7] cũng vơi theo tháng [C] ngày",
     views: 1532,
     likes: 135,
+    createDate: createDate(-1).toJSON(),
+    updateDate: null,
   },
   {
     id: 2,
     name: "Bến xuân",
-    slug: "ben-xuan",
-    genre: { id: 16, name: "Slow" },
-    key: { id: 10, name: "Em" },
-    authors: [
-      { id: 2, name: "Văn Cao", slug: "van-cao" },
-      { id: 1, name: "Phạm Duy", slug: "pham-duy" },
-    ],
-    poets: [],
-    artists: [{ id: 3, name: "Cao Minh", slug: "cao-minh" }],
+    slugId: "ben-xuan",
+    genreId: 16,
+    keyId: 10,
+    authorIds: [2, 1],
+    poetIds: [],
+    artistIds: [3],
     preview:
       "Nhà [Em] tôi bên chiếc cầu soi [G] nước Em đến [C] tôi [Bm] một [Em] lần Bao lũ chim [Bm] rừng họp đàn trên khắp bến [Em] xuân Từng đôi rung cánh [G] trắng Ríu rít ca [D] u",
     lyrics:
       "Nhà [Em] tôi bên chiếc cầu soi [G] nước\nEm đến [C] tôi [Bm] một [Em] lần\nBao lũ chim [Bm] rừng họp đàn trên khắp bến [Em] xuân\nTừng đôi rung cánh [G] trắng\nRíu rít ca [D] u ú ù u [G] ú\nCành đào hoe [Bm] nắng chan [Em] hòa\nChim ca thương mến chim ngân [G] xa [D] u ú ù u [G] ú\nHồn mùa ngây [Bm] ngất trầm [Em] vương.\n\nDìu nhau theo dốc suối nơi ven [Em] đèo\nCòn [G] thấy chim [D] ghen lời âu [G] yếm\nĐến [B7] đây chân bước cùng ngập ngừng\nMắt em như dáng thuyền soi [D] nước\nTà [B7] áo em rung theo gió nhẹ thẹn thùng ngoài bến [Em] xuân.",
-    views: 1578,
+    views: 15000,
     likes: 425,
+    createDate: createDate(-15).toJSON(),
+    updateDate: createDate(-10).toJSON(),
   },
   {
     id: 3,
     name: "Áo anh sứt chỉ đường tà",
     slug: "ao-anh-sut-chi-duong-ta",
-    genre: { id: 16, name: "Slow" },
-    key: { id: 2, name: "Cm" },
-    authors: [{ id: 1, name: "Phạm Duy", slug: "pham-duy" }],
-    poets: [{ id: 1, name: "Hữu Loan", slug: "huu-loan" }],
-    artists: [
-      { id: 4, name: "Elvis Phương", slug: "elvis-phuong" },
-      { id: 5, name: "Thái Thanh", slug: "thai-thanh" },
-    ],
+    genreId: 16,
+    keyId: 2,
+    authorIds: [1],
+    poetIds: [1],
+    artistIds: [4, 5],
     preview:
       "Nàng có ba người [Cm] anh đi bộ [Ab] đội lâu [Gsus4] rồi Nàng có đôi người [Fm] em có em [Bb] chưa biết [Ebmaj7] nói. [Gsus4] Tóc nàng hãy còn xanh, tóc nàng hãy còn xanh [Cm] Tôi là",
     lyrics:
       "Nàng có ba người [Cm] anh đi bộ [Ab] đội lâu [Gsus4] rồi\nNàng có đôi người [Fm] em có em [Bb] chưa biết [Ebmaj7] nói.\n\n[Gsus4] Tóc nàng hãy còn xanh, tóc nàng hãy còn xanh\n[Cm] Tôi là người chiến binh xa gia [Fm] đình đi kháng [Cm] chiến\nTôi yêu nàng như yêu người em [Bb] gái tôi [Eb] yêu\nNgười em [Fm] gái tôi [Gsus4] yêu, người em [Fm] gái tôi [Cm] yêu.\n\nNgày hợp [C] hôn tôi mặc đồ hành quân\nBùn đồng [Am] quê bết đôi giày chiến [C] sĩ\nTôi mới từ [Dm] xa nơi đơn vị [G] về\nTôi mới từ [Dm] xa nơi đơn vị [G] về.",
-    views: 4546,
+    views: 30000,
     likes: 1351,
+    createDate: createDate(-45).toJSON(),
+    updateDate: createDate(-30).toJSON(),
   },
 ];
 

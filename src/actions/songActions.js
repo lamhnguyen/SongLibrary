@@ -25,6 +25,7 @@ export function loadSongs() {
     return songApi
       .getSongs()
       .then((songs) => {
+        console.log(songs);
         dispatch(loadSongsSuccess(songs));
       })
       .catch((error) => {

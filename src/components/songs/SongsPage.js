@@ -1,21 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { Redirect, Link } from "react-router-dom";
-import { bindActionCreators } from "redux";
 import PropTypes from "prop-types";
-import { toast } from "react-toastify";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   loadSongs,
   changeSongPage,
   changeSongPageSize,
 } from "../../actions/songActions";
+import SongFilter from "./SongFilter";
 import SongList from "./SongList";
 import Spinner from "../common/Spinner";
 import Pagination from "../common/Pagination";
 
 export function SongsPage({
   songs,
+  filter,
   isLoading,
   loadSongs,
   changeSongPage,
@@ -26,6 +24,10 @@ export function SongsPage({
       loadSongs();
     }
   }, [songs]);
+
+  function handleChangeView(view) {
+    loadSongs();
+  }
 
   function handleChangePage(start) {
     changeSongPage(start);
@@ -49,21 +51,13 @@ export function SongsPage({
   return (
     <div className="container">
       <div className="row">
-        <button type="button" className="btn btn-outline-primary btn-sm mr-1">
-          <Link to="/song?list=new">New</Link>
-        </button>
-        <button type="button" className="btn btn-outline-secondary btn-sm mr-1">
-          <Link to="/song?list=popular">Popular</Link>
-        </button>
-        <button type="button" className="btn btn-outline-success btn-sm mr-1">
-          <Link to="/song?list=recent">Recent</Link>
-        </button>
-        <button type="button" className="btn btn-outline-danger btn-sm mr-1">
-          <Link to="/song?list=like">Like</Link>
-        </button>
-        <button type="button" className="btn btn-outline-warning btn-sm mr-1">
-          <Link to="/song?list=random">Random</Link>
-        </button>
+        <SongFilter
+          view={filter.view}
+          author={filter.author}
+          artist={filter.artist}
+          poet={filter.poet}
+          onChangeView={handleChangeView}
+        />
       </div>
       <div className="row pt-3">
         <SongList songs={songs} />
@@ -82,6 +76,7 @@ export function SongsPage({
 
 SongsPage.propTypes = {
   songs: PropTypes.array.isRequired,
+  filter: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
   loadSongs: PropTypes.func.isRequired,
   changeSongPage: PropTypes.func.isRequired,
@@ -91,6 +86,7 @@ SongsPage.propTypes = {
 function mapStateToProps(state) {
   return {
     songs: state.songs,
+    filter: state.songFilter,
     isLoading: state.apiStatus.count > 0,
   };
 }

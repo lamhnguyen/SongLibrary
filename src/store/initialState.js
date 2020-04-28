@@ -1,7 +1,7 @@
 export default {
   songs: [],
   songFilter: {
-    list: "New",
+    view: "New",
     author: "",
     poet: "",
     artist: "",
