@@ -1,12 +1,12 @@
 export default {
   songs: [],
   songFilter: {
-    view: "New",
-    author: "",
+    view: "random",
+    author: "van-cao",
     poet: "",
     artist: "",
-    sortBy: "Name",
-    sortOrder: "Asc",
+    sortBy: "name",
+    sortOrder: "asc",
     start: 0,
     totalCount: 985,
     pageSize: 25,

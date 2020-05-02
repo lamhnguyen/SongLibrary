@@ -35,6 +35,10 @@ export function loadSongs() {
   };
 }
 
+export function changeSongView(view) {
+  return { type: types.CHANGE_SONG_VIEW, view };
+}
+
 export function changeSongPage(start) {
   return { type: types.CHANGE_SONG_PAGE, start };
 }

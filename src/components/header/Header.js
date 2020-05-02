@@ -1,9 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AuthContext from "../../security/AuthContext";
 import "./Header.css";
 
 const Header = () => {
+  const auth = useContext(AuthContext);
+
+  function handleLogIn(e) {
+    e.preventDefault();
+    auth.login();
+  }
+
+  function handleLogOut(e) {
+    e.preventDefault();
+    auth.logout();
+  }
+
   return (
     <nav className="navbar navbar-expand-xl navbar-light bg-light sticky-top">
       <div className="container">
@@ -31,14 +44,30 @@ const Header = () => {
                 aria-expanded="false"
               >
                 <FontAwesomeIcon icon="user" />
+                <span className="px-1">
+                  {auth.isAuthenticated() && auth.getName()}
+                </span>
               </Link>
               <div className="dropdown-menu m-0" aria-labelledby="menuUser">
-                <Link className="dropdown-item" to="#" rel="nofollow">
-                  Sign in
-                </Link>
-                <Link className="dropdown-item" to="#" rel="nofollow">
-                  Sign up
-                </Link>
+                {auth.isAuthenticated() == false && (
+                  <a
+                    className="dropdown-item"
+                    rel="nofollow"
+                    onClick={(e) => handleLogIn(e)}
+                  >
+                    Log in
+                  </a>
+                )}
+                {auth.isAuthenticated() && (
+                  <a
+                    className="dropdown-item"
+                    to="#"
+                    rel="nofollow"
+                    onClick={(e) => handleLogOut(e)}
+                  >
+                    Log out
+                  </a>
+                )}
               </div>
             </li>
           </ul>

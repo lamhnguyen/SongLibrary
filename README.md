@@ -34,6 +34,8 @@
 | redux-logger     | Log actions                                          |
 | reselect         | Memoize selectors for performance                    |
 | Font Awesome     | Vector icons                                         |
+| auth0-js         | Client Side JavaScript toolkit for Auth0 API         |
+| dotenv-webpack   | Handle environment variables                         |
 
 ### Development Dependencies
 

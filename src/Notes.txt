@@ -1,2 +1,0 @@
-- Install FontAwesome (https://github.com/FortAwesome/react-fontawesome)
-    - npm i --save @fortawesome/fontawesome-svg-core  @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome

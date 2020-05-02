@@ -1,0 +1,30 @@
+- Hosts file
+    - 127.0.0.1       songlibrary-dev.net
+- Authen0
+    - SongLibray app
+        - Domain: songlibrary-dev@auth0.net
+        - ClientId: Jct5m9l8dLC4MIZyUO77QBvYXHeQxYaq
+        - App type: Single Page Application
+        - Login Url: http://SongLibray.net/Login
+        - Callback Url: http://SongLibray.net/callback
+        - Logout Urls: http://SongLibray.net
+        - Allowed web origins: http://SongLibray.net - 
+    - OAuth terminologies
+        - Resource owner: end user
+        - Client: Application
+        - Resource Server: Api
+        - Authorization Server: Auth0 (authenticate the Resource Owner & issues Access Tokens)
+        - User Agent: Browser or Native app (used by the Resource Owner to interact with the Client)
+    - Key decisions:
+        - OAuth flow (ways of retrieving an Access Token): Implicit Grant (the app DIRECTLY retrieves an Access Token/SPA)
+        - Login/signup implementation: Universal (hosted by Auth0)
+        - Storing tokens: Local Storage (for simplicity)
+
+- Install FontAwesome (https://github.com/FortAwesome/react-fontawesome)
+    - npm i --save @fortawesome/fontawesome-svg-core  @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome
+
+- References
+    - Centralized Error Handing with React and Redux - Manujith Pallewatte (https://app.pluralsight.com/guides/centralized-error-handing-with-react-and-redux)
+    - Understanding React + Redux Errors With Sentry and FullStory - Patrick Brandt (https://bionic.fullstory.com/react-redux-errors-with-fullstory-and-sentry/)
+    - Eloquent Javascript book (https://eloquentjavascript.net/index.html)
+    - React - Apply classes conditionally (https://www.pluralsight.com/guides/applying-classes-conditionally-react)

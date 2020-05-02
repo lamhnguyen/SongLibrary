@@ -1,6 +1,7 @@
 const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 process.env.NODE_ENV = "development"; // let Babel know if optimization is needed
 
@@ -21,7 +22,9 @@ module.exports = {
     historyApiFallback: true,
     disableHostCheck: true,
     headers: { "Access-Control-Allow-Origin": "*" },
-    https: false,
+    host: "songlibrary-dev.net",
+    port: 443,
+    https: true,
   },
   plugins: [
     // define global constants at the compile time (dev vs prod)
@@ -32,6 +35,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "src/index.html",
       favicon: "src/favicon.ico",
+    }),
+    // Environment variables
+    new Dotenv({
+      path: path.resolve(__dirname, "./.env.dev"),
     }),
   ],
   module: {

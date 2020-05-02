@@ -3,6 +3,8 @@ import initialState from "../store/initialState";
 
 export default function songReducer(state = initialState.songFilter, action) {
   switch (action.type) {
+    case types.CHANGE_SONG_VIEW:
+      return { ...state, view: action.view };
     case types.CHANGE_SONG_PAGE:
       return { ...state, start: action.start };
     case types.CHANGE_SONG_PAGE_SIZE:

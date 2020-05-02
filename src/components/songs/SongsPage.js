@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
   loadSongs,
+  changeSongView,
   changeSongPage,
   changeSongPageSize,
 } from "../../actions/songActions";
@@ -16,6 +17,7 @@ export function SongsPage({
   filter,
   isLoading,
   loadSongs,
+  changeSongView,
   changeSongPage,
   changeSongPageSize,
 }) {
@@ -26,6 +28,8 @@ export function SongsPage({
   }, [songs]);
 
   function handleChangeView(view) {
+    changeSongView(view);
+
     loadSongs();
   }
 
@@ -79,6 +83,7 @@ SongsPage.propTypes = {
   filter: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
   loadSongs: PropTypes.func.isRequired,
+  changeSongView: PropTypes.func.isRequired,
   changeSongPage: PropTypes.func.isRequired,
   changeSongPageSize: PropTypes.func.isRequired,
 };
@@ -93,6 +98,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
   loadSongs,
+  changeSongView,
   changeSongPage,
   changeSongPageSize,
 };

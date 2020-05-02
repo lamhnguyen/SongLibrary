@@ -17,6 +17,11 @@ export const toNumber = (value, defaultValue) => {
   return isNaN(parseInt(value)) ? defaultValue : parseInt(value);
 };
 
-function parseJson(str) {
+// eslint-disable-next-line no-unused-vars
+export const parseJson = (str) => {
   return attempt(JSON.parse.bind(null, str));
-}
+};
+
+export const toUrl = (location) => {
+  return `${location.pathname}${location.search}${location.hash}`;
+};
