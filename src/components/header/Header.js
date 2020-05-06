@@ -33,6 +33,33 @@ const Header = () => {
         </button>
         <div className="navbar-collapse collapse" id="menu">
           <ul className="navbar-nav mr-auto pr-4">
+            {auth.isAuthenticated() && auth.isAdmin() && (
+              <li className="nav-item dropdown">
+                <Link
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  id="menuAdmin"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <FontAwesomeIcon icon="edit" />
+                  <span className="px-1">Admin</span>
+                </Link>
+                <div className="dropdown-menu m-0" aria-labelledby="menuUser">
+                  <a className="dropdown-item" rel="nofollow">
+                    Manage Authors
+                  </a>
+                  <a className="dropdown-item" rel="nofollow">
+                    Manage Poets
+                  </a>
+                  <a className="dropdown-item" rel="nofollow">
+                    Manage Artists
+                  </a>
+                </div>
+              </li>
+            )}
             <li className="nav-item dropdown">
               <Link
                 className="nav-link dropdown-toggle"

@@ -36,6 +36,7 @@
 | Font Awesome     | Vector icons                                         |
 | auth0-js         | Client Side JavaScript toolkit for Auth0 API         |
 | dotenv-webpack   | Handle environment variables                         |
+| jsonwebtoken     | An implementation of JSON Web Tokens                 |
 
 ### Development Dependencies
 

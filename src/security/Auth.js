@@ -1,4 +1,9 @@
 import auth0 from "auth0-js";
+import { login } from "../api/authApi";
+
+const CLAIM_APP_METADATA = "http://songlibrary.net/app_metadata";
+
+const ROLE_ADMIN = "Admin";
 
 export default class Auth {
   constructor(history) {
@@ -20,7 +25,7 @@ export default class Auth {
 
   handleAuthentication = () => {
     this.auth0.parseHash((err, authResult) => {
-      console.log(authResult);
+      // console.log(authResult);
       if (
         authResult &&
         authResult.accessToken &&
@@ -28,6 +33,13 @@ export default class Auth {
         authResult.idTokenPayload
       ) {
         this.setSession(authResult);
+
+        login({
+          authId: authResult.idTokenPayload.sub,
+          name: authResult.idTokenPayload.name,
+          email: authResult.idTokenPayload.email,
+        });
+
         this.history.push("/");
       } else if (err) {
         this.history.push("/");
@@ -58,15 +70,9 @@ export default class Auth {
     return accessToken;
   };
 
-  getName() {
-    const name = localStorage.getItem("name");
-    if (!name) {
-      throw new Error("No name found.");
-    }
-    return name;
-  }
-
   getProfile = (callback) => {
+    if (this.isAuthenticated() == false) return null;
+
     if (this.userProfile) return callback(this.userProfile);
 
     this.auth0.client.userInfo(this.getAccessToken(), (err, profile) => {
@@ -76,12 +82,33 @@ export default class Auth {
     });
   };
 
-  userHasScopes(scopes) {
-    const grantedScopes = (
-      JSON.parse(localStorage.getItem("scopes")) || ""
-    ).split(" ");
+  getName = () => {
+    return localStorage.getItem("name") || "";
+  };
+
+  getRoles = () => {
+    const roles = localStorage.getItem("roles") || "";
+    return roles.split(",");
+  };
+
+  isAdmin = () => {
+    return this.userHasRoles([ROLE_ADMIN]);
+  };
+
+  getScopes = () => {
+    const scopes = JSON.parse(localStorage.getItem("scopes")) || "";
+    return scopes.split(" ");
+  };
+
+  userHasRoles = (roles) => {
+    const assignedRoles = this.getRoles();
+    return roles.every((role) => assignedRoles.includes(role));
+  };
+
+  userHasScopes = (scopes) => {
+    const grantedScopes = this.getScopes();
     return scopes.every((scope) => grantedScopes.includes(scope));
-  }
+  };
 
   setSession = (authResult) => {
     // set the time that the access token will expire
@@ -100,6 +127,10 @@ export default class Auth {
     localStorage.setItem("user_id", authResult.idTokenPayload.sub);
     localStorage.setItem("name", authResult.idTokenPayload.name);
     localStorage.setItem("email", authResult.idTokenPayload.email);
+    localStorage.setItem(
+      "roles",
+      authResult.idTokenPayload[CLAIM_APP_METADATA].roles
+    );
   };
 
   cleanUpSession = () => {
@@ -110,6 +141,7 @@ export default class Auth {
     localStorage.removeItem("user_id");
     localStorage.removeItem("name");
     localStorage.removeItem("email");
+    localStorage.removeItem("roles");
 
     this.userProfile = null;
   };

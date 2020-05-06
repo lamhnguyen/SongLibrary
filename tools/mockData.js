@@ -145,6 +145,20 @@ const logs = [
   { id: 2, logLevel: 2, data: "Just for your information" },
 ];
 
+const users = [
+  {
+    id: 1,
+    authId: "google-oauth2|106171119075307882897",
+    name: "Lam Nguyen",
+    email: "lam.h.n@gmail.com",
+  },
+];
+
+const likes = [
+  { id: 1, userId: 1, songId: 1 },
+  { id: 2, userId: 1, songId: 2 },
+];
+
 // Using CommonJS style export so we can consume via Node (without using Babel-node)
 module.exports = {
   newSong,
@@ -155,4 +169,6 @@ module.exports = {
   genres,
   keys,
   logs,
+  users,
+  likes,
 };

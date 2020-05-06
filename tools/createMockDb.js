@@ -3,7 +3,17 @@ const fs = require("fs");
 const path = require("path");
 const mockData = require("./mockData");
 
-const { songs, authors, poets, artists, genres, keys, logs } = mockData;
+const {
+  songs,
+  authors,
+  poets,
+  artists,
+  genres,
+  keys,
+  logs,
+  users,
+  likes,
+} = mockData;
 const data = JSON.stringify({
   songs,
   authors,
@@ -12,6 +22,8 @@ const data = JSON.stringify({
   genres,
   keys,
   logs,
+  users,
+  likes,
 });
 const filepath = path.join(__dirname, "db.json");
 

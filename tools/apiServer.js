@@ -19,6 +19,7 @@ const router = jsonServer.router(dbFile);
 const queryString = require("querystring");
 const _ = require("lodash");
 const fs = require("fs");
+var jwt = require("jsonwebtoken");
 
 // Can pass a limited number of options to this to override (some) defaults. See https://github.com/typicode/json-server#api
 const middlewares = jsonServer.defaults();
@@ -56,6 +57,42 @@ server.post("/songs/", function (req, res, next) {
     next();
   }
 });
+
+server.post("/users/login", function (req, res /*, next*/) {
+  const db = router.db;
+  const userDto = req.body;
+
+  const authId = userDto.authId;
+  let user = getBy(db, "users", "authId", authId);
+
+  user = user
+    ? update(db, "users", { ...userDto, id: user.id })
+    : insert(db, "users", userDto);
+
+  const token = generateToken(user);
+
+  res.status(200);
+  res.locals.data = {
+    user,
+    token
+  };
+});
+
+router.render = (req, res) => {
+  if (res.statusCode === 200) {
+    if (req.path === "/songs" || req.path === "/songs/") {
+      const db = getDb();
+
+      const filter = parseSongFilter(db, req);
+      // console.log(filter);
+
+      const songs = getSongs(db, filter);
+      res.jsonp(songs);
+    } else {
+      res.jsonp(res.locals.data);
+    }
+  }
+};
 
 // Use default router
 server.use(router);
@@ -112,6 +149,12 @@ function findById(arr, id) {
   return _.find(arr, (item) => item.id == id);
 }
 
+function findBy(arr, name, value) {
+  if (!value) return null;
+
+  return _.find(arr, (item) => item[name] == value);
+}
+
 function getById(arr, id) {
   const item = findById(arr, id);
   if (!item) throw new Error("Item cannot be found - id: " + id);
@@ -143,8 +186,6 @@ function getDb() {
   return db;
 }
 
-// Centralized logic
-
 // Returns a URL friendly slug
 function createSlug(value) {
   return value
@@ -153,26 +194,59 @@ function createSlug(value) {
     .toLowerCase();
 }
 
+// Database helpers
+function get(db, name, id) {
+  const chain = db.get(name);
+
+  const resource = chain.getById(id).value();
+  return resource;
+}
+
+function getBy(db, name, key, value) {
+  const chain = db.get(name);
+
+  const resource = chain.find((obj) => obj[key] == value).value();
+  return resource;
+}
+
+function insert(db, name, data) {
+  const chain = db.get(name);
+
+  const resource = chain.insert(data).value();
+  return resource;
+}
+
+function update(db, name, data) {
+  let chain = db.get(name);
+  const id = data.id;
+
+  const resource = chain.replaceById(id, data).value();
+  return resource;
+}
+
+// Security helpers
+const JWT_SECRET = "secret";
+const JWT_EXPIRES_IN = 60 * 60 * 24, //  24 hours
+
+function generateToken(user) {
+  var payload = {
+    id: user.id,
+    name: user.name,
+    roles: user.roles,
+  };
+
+  const token = jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN
+  });
+
+  return token;
+}
+
+// Song
 function validateSong(song) {
   if (!song.name) return "Name is required.";
   return "";
 }
-
-router.render = (req, res) => {
-  if (res.statusCode === 200) {
-    if (req.path === "/songs" || req.path === "/songs/") {
-      const db = getDb();
-
-      const filter = parseSongFilter(db, req);
-      console.log(filter);
-
-      const songs = getSongs(db, filter);
-      res.jsonp(songs);
-    } else {
-      res.jsonp(res.locals.data);
-    }
-  }
-};
 
 const parseSongFilter = (db, req) => {
   const {

@@ -19,6 +19,18 @@
         - OAuth flow (ways of retrieving an Access Token): Implicit Grant (the app DIRECTLY retrieves an Access Token/SPA)
         - Login/signup implementation: Universal (hosted by Auth0)
         - Storing tokens: Local Storage (for simplicity)
+    - Add roles claim rule: to include the roles to the JWT token
+        function (user, context, callback) {
+            user.app_metadata = user.app_metadata || {};
+        
+            const assignedRoles = (context.authorization || {}).roles;
+            user.app_metadata.roles = assignedRoles || [];
+            
+            const namespace = 'http://songlibrary.net/';
+            context.idToken[namespace + 'app_metadata'] = user.app_metadata;
+        
+            return callback(null, user, context);
+        }
 
 - Install FontAwesome (https://github.com/FortAwesome/react-fontawesome)
     - npm i --save @fortawesome/fontawesome-svg-core  @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome
