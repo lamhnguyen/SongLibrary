@@ -2,8 +2,8 @@ import * as types from "./actionTypes";
 import { apiCallBegin, apiCallError } from "./apiActions";
 import * as songApi from "../api/songApi";
 
-export function loadSongsSuccess(songs) {
-  return { type: types.LOAD_SONGS_SUCCESS, songs };
+export function loadSongsSuccess(result) {
+  return { type: types.LOAD_SONGS_SUCCESS, result };
 }
 
 export function createSongSuccess(song) {
@@ -19,14 +19,13 @@ export function deleteSongSuccess(song) {
 }
 
 // thunk action creator
-export function loadSongs() {
+export function loadSongs(filter) {
   return function (dispatch) {
     dispatch(apiCallBegin());
     return songApi
-      .getSongs()
-      .then((songs) => {
-        console.log(songs);
-        dispatch(loadSongsSuccess(songs));
+      .getSongs(filter)
+      .then((result) => {
+        dispatch(loadSongsSuccess(result));
       })
       .catch((error) => {
         const errMsg = "loadSongs failed - Error: " + error.message;
@@ -45,4 +44,24 @@ export function changeSongPage(start) {
 
 export function changeSongPageSize(pageSize) {
   return { type: types.CHANGE_SONG_PAGE_SIZE, pageSize };
+}
+
+export function changeSongAuthor(author) {
+  return { type: types.CHANGE_SONG_AUTHOR, author };
+}
+
+export function changeSongPoet(poet) {
+  return { type: types.CHANGE_SONG_POET, poet };
+}
+
+export function changeSongArtist(artist) {
+  return { type: types.CHANGE_SONG_ARTIST, artist };
+}
+
+export function changeSongSortOrder(sort, order) {
+  return { type: types.CHANGE_SONG_SORT_ORDER, sort, order };
+}
+
+export function resetSongFilter() {
+  return { type: types.RESET_SONG_FILTER };
 }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -13,12 +14,15 @@ import Footer from "./footer/Footer";
 import Alert from "./alert/Alert";
 import PageNotFound from "./PageNotFound";
 import AboutPage from "./about/AboutPage";
-import SongsPage from "./songs/SongsPage";
+import SongsPage from "./songs/SongsPage"; // eslint-disable-line import/no-named-as-default
 import ManageSongPage from "./songs/ManageSongPage";
 import ErrorBoundary from "./ErrorBoundary";
 
-function App(props) {
+export function App(props) {
   const [auth] = useState(new Auth(props.history));
+
+  const { isUnauthorized } = props;
+  if (isUnauthorized) auth.logout();
 
   return (
     <AuthContext.Provider value={auth}>
@@ -33,7 +37,7 @@ function App(props) {
               render={(props) => <AuthCallback auth={auth} {...props} />}
             />
             <Route path="/about" component={AboutPage} />
-            <Route path="/songs" component={SongsPage} />
+            <Route path="/song" component={SongsPage} />
             <Route path="/song/:slug" component={ManageSongPage} />
             <Route path="/song" component={ManageSongPage} />
             <PrivateRoute path="/private" component={AboutPage} />
@@ -49,6 +53,16 @@ function App(props) {
 
 App.propTypes = {
   history: PropTypes.object.isRequired,
+  isUnauthorized: PropTypes.bool.isRequired,
 };
 
-export default App;
+function mapStateToProps(state) {
+  return {
+    isUnauthorized: state.apiStatus.isUnauthorized,
+    logLevel: state.logLevel,
+  };
+}
+
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -31,7 +31,8 @@
         
             return callback(null, user, context);
         }
-
+- Api server authentication
+    - https://travishorn.com/api-server-with-jwt-authentication-6bb4985c5253
 - Install FontAwesome (https://github.com/FortAwesome/react-fontawesome)
     - npm i --save @fortawesome/fontawesome-svg-core  @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome
 

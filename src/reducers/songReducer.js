@@ -4,7 +4,7 @@ import initialState from "../store/initialState";
 export default function songReducer(state = initialState.songs, action) {
   switch (action.type) {
     case types.LOAD_SONGS_SUCCESS:
-      return action.songs;
+      return action.result.songs;
     case types.CREATE_SONG_SUCCESS:
       return [...state, { ...action.song }];
     case types.UPDATE_SONG_SUCCESS:

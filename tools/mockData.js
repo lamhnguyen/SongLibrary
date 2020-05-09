@@ -26,7 +26,7 @@ const songs = [
   {
     id: 2,
     name: "Bến xuân",
-    slugId: "ben-xuan",
+    slug: "ben-xuan",
     genreId: 16,
     keyId: 10,
     authorIds: [2, 1],
@@ -151,6 +151,8 @@ const users = [
     authId: "google-oauth2|106171119075307882897",
     name: "Lam Nguyen",
     email: "lam.h.n@gmail.com",
+    roles: "",
+    token: "",
   },
 ];
 

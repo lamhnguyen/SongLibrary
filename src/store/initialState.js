@@ -2,13 +2,13 @@ export default {
   songs: [],
   songFilter: {
     view: "random",
-    author: "van-cao",
-    poet: "",
-    artist: "",
-    sortBy: "name",
-    sortOrder: "asc",
+    author: null,
+    poet: null,
+    artist: null,
+    sort: "name",
+    order: "asc",
     start: 0,
-    totalCount: 985,
+    totalCount: 0,
     pageSize: 25,
   },
   authors: [],
@@ -20,6 +20,7 @@ export default {
   apiStatus: {
     count: 0,
     errorMessage: null,
+    isUnauthorized: false,
   },
   alert: {
     infoMessage: null,

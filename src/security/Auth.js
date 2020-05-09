@@ -1,5 +1,5 @@
 import auth0 from "auth0-js";
-import { login } from "../api/authApi";
+import * as authApi from "../api/authApi";
 
 const CLAIM_APP_METADATA = "http://songlibrary.net/app_metadata";
 
@@ -20,31 +20,65 @@ export default class Auth {
   }
 
   login = () => {
-    this.auth0.authorize({ mode: "signUp" });
+    this.auth0.authorize();
+  };
+
+  parseAuthResult = (data) => {
+    if (!data.accessToken) throw new Error("Access token is required");
+    if (!data.idToken) throw new Error("Id token is required");
+    if (!data.idTokenPayload) throw new Error("Id token payload is required");
+
+    // set the time that the access token will expire
+    const expiresAt = JSON.stringify(
+      data.expiresIn * 1000 + new Date().getTime()
+    );
+
+    const authResult = {
+      accessToken: data.accessToken,
+      idToken: data.idToken,
+      scope: data.scope,
+      expiresAt,
+      authId: data.idTokenPayload.sub,
+      name: data.idTokenPayload.name,
+      email: data.idTokenPayload.email,
+      roles: data.idTokenPayload[CLAIM_APP_METADATA].roles,
+    };
+
+    return authResult;
+  };
+
+  saveUser = (authResult) => {
+    authApi
+      .saveUser({
+        authId: authResult.authId,
+        name: authResult.name,
+        email: authResult.email,
+        roles: authResult.roles.join(","),
+      })
+      .then((user) => {
+        localStorage.setItem("api_Token", user.token);
+      })
+      .catch((error) => {
+        throw new Error(`saveUser failed - Error: ${error.message || error}`);
+      });
   };
 
   handleAuthentication = () => {
-    this.auth0.parseHash((err, authResult) => {
-      // console.log(authResult);
-      if (
-        authResult &&
-        authResult.accessToken &&
-        authResult.idToken &&
-        authResult.idTokenPayload
-      ) {
-        this.setSession(authResult);
-
-        login({
-          authId: authResult.idTokenPayload.sub,
-          name: authResult.idTokenPayload.name,
-          email: authResult.idTokenPayload.email,
-        });
-
-        this.history.push("/");
-      } else if (err) {
+    this.auth0.parseHash((err, data) => {
+      if (err) {
         this.history.push("/");
         throw new Error(`handleAuthentication failed - Error: ${err.error}`);
       }
+
+      const authResult = this.parseAuthResult(data);
+      // If there is a value on the `scope` param from the authResult, use it to set scopes in the session for the user.
+      // Otherwise use the scopes as requested. If no scopes were requested, set it to nothing
+      authResult.scopes = data.scope || this.requestedScopes || "";
+
+      this.saveUser(authResult);
+
+      this.setSession(authResult);
+      this.history.push("/");
     });
   };
 
@@ -111,26 +145,12 @@ export default class Auth {
   };
 
   setSession = (authResult) => {
-    // set the time that the access token will expire
-    const expiresAt = JSON.stringify(
-      authResult.expiresIn * 1000 + new Date().getTime()
-    );
-
-    // If there is a value on the `scope` param from the authResult, use it to set scopes in the session for the user.
-    // Otherwise use the scopes as requested. If no scopes were requested, set it to nothing
-    const scopes = authResult.scope || this.requestedScopes || "";
-
     localStorage.setItem("access_token", authResult.accessToken);
     localStorage.setItem("id_token", authResult.idToken);
-    localStorage.setItem("expires_at", expiresAt);
-    localStorage.setItem("scopes", JSON.stringify(scopes));
-    localStorage.setItem("user_id", authResult.idTokenPayload.sub);
-    localStorage.setItem("name", authResult.idTokenPayload.name);
-    localStorage.setItem("email", authResult.idTokenPayload.email);
-    localStorage.setItem(
-      "roles",
-      authResult.idTokenPayload[CLAIM_APP_METADATA].roles
-    );
+    localStorage.setItem("expires_at", authResult.expiresAt);
+    localStorage.setItem("name", authResult.name);
+    localStorage.setItem("scopes", JSON.stringify(authResult.scopes));
+    localStorage.setItem("roles", authResult.roles);
   };
 
   cleanUpSession = () => {
@@ -138,10 +158,9 @@ export default class Auth {
     localStorage.removeItem("id_token");
     localStorage.removeItem("expires_at");
     localStorage.removeItem("scopes");
-    localStorage.removeItem("user_id");
     localStorage.removeItem("name");
-    localStorage.removeItem("email");
     localStorage.removeItem("roles");
+    localStorage.removeItem("api_Token");
 
     this.userProfile = null;
   };

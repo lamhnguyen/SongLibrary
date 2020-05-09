@@ -19,7 +19,7 @@ const router = jsonServer.router(dbFile);
 const queryString = require("querystring");
 const _ = require("lodash");
 const fs = require("fs");
-var jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 // Can pass a limited number of options to this to override (some) defaults. See https://github.com/typicode/json-server#api
 const middlewares = jsonServer.defaults();
@@ -29,6 +29,24 @@ server.use(middlewares);
 
 // To handle POST, PUT and PATCH you need to use a body-parser. Using JSON Server's bodyParser
 server.use(jsonServer.bodyParser);
+
+// Authenticate
+server.use(function (req, res, next) {
+  var token = req.headers["authorization"];
+  if (!token) return next();
+
+  token = token.replace("Bearer ", "");
+
+  jwt.verify(token, JWT_SECRET, function (err, user) {
+    if (err) {
+      res.status(401).send(err);
+    } else {
+      //set the user to req so other routes can use it
+      req.user = user;
+      next();
+    }
+  });
+});
 
 // Simulate delay on all requests
 /*
@@ -58,24 +76,24 @@ server.post("/songs/", function (req, res, next) {
   }
 });
 
-server.post("/users/login", function (req, res /*, next*/) {
+server.post("/users/", function (req, res /*, next*/) {
   const db = router.db;
   const userDto = req.body;
 
   const authId = userDto.authId;
   let user = getBy(db, "users", "authId", authId);
 
+  // create or update user
   user = user
     ? update(db, "users", { ...userDto, id: user.id })
     : insert(db, "users", userDto);
 
-  const token = generateToken(user);
+  user.token = generateToken(user);
 
   res.status(200);
-  res.locals.data = {
-    user,
-    token
-  };
+  res.locals.data = user;
+
+  router.render(req, res);
 });
 
 router.render = (req, res) => {
@@ -104,7 +122,7 @@ server.listen(port, () => {
 });
 
 // Constants
-const VIEW_SIZE = 1;
+const VIEW_SIZE = 100;
 
 const VIEW_NEW = "new";
 const VIEW_POPULAR = "popular";
@@ -226,7 +244,7 @@ function update(db, name, data) {
 
 // Security helpers
 const JWT_SECRET = "secret";
-const JWT_EXPIRES_IN = 60 * 60 * 24, //  24 hours
+const JWT_EXPIRES_IN = 60 * 60 * 24; //  24 hours
 
 function generateToken(user) {
   var payload = {
@@ -236,7 +254,7 @@ function generateToken(user) {
   };
 
   const token = jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN
+    expiresIn: JWT_EXPIRES_IN,
   });
 
   return token;
@@ -400,5 +418,15 @@ function getSongs(db, filter) {
 
   const pagedSongs = _(sortedSongs).drop(filter.start).take(pageSize).value();
 
-  return pagedSongs;
+  const result = {
+    meta: {
+      totalCount: filteredSongs.length,
+      start: filter.start,
+      pageSize: filter.pageSize,
+      count: pagedSongs.length,
+    },
+    songs: pagedSongs,
+  };
+
+  return result;
 }

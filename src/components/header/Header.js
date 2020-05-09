@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { resetApp } from "../../global";
 import AuthContext from "../../security/AuthContext";
 import "./Header.css";
 
@@ -20,7 +21,7 @@ const Header = () => {
   return (
     <nav className="navbar navbar-expand-xl navbar-light bg-light sticky-top">
       <div className="container">
-        <Link to="/" className="navbar-brand">
+        <Link to="/" className="navbar-brand" onClick={resetApp}>
           <h3>Song Library</h3>
         </Link>
         <button
@@ -35,7 +36,7 @@ const Header = () => {
           <ul className="navbar-nav mr-auto pr-4">
             {auth.isAuthenticated() && auth.isAdmin() && (
               <li className="nav-item dropdown">
-                <Link
+                <a
                   className="nav-link dropdown-toggle"
                   href="#"
                   id="menuAdmin"
@@ -46,7 +47,7 @@ const Header = () => {
                 >
                   <FontAwesomeIcon icon="edit" />
                   <span className="px-1">Admin</span>
-                </Link>
+                </a>
                 <div className="dropdown-menu m-0" aria-labelledby="menuUser">
                   <a className="dropdown-item" rel="nofollow">
                     Manage Authors
@@ -61,7 +62,7 @@ const Header = () => {
               </li>
             )}
             <li className="nav-item dropdown">
-              <Link
+              <a
                 className="nav-link dropdown-toggle"
                 href="#"
                 id="menuUser"
@@ -74,7 +75,7 @@ const Header = () => {
                 <span className="px-1">
                   {auth.isAuthenticated() && auth.getName()}
                 </span>
-              </Link>
+              </a>
               <div className="dropdown-menu m-0" aria-labelledby="menuUser">
                 {auth.isAuthenticated() == false && (
                   <a

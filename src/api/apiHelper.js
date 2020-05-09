@@ -1,17 +1,28 @@
+import * as errors from "../errorCodes";
+
 export async function handleResponse(response) {
   if (response.ok) return response.json();
-  if (response.status === 400) {
-    // So, a server-side validation error occurred.
-    // Server side validation returns a string error message, so parse as text instead of json.
-    const error = await response.text();
-    throw new Error(error);
+
+  const message = (await response.text()) || "Unhandled status";
+  let code = "";
+  switch (response.status) {
+    case 400:
+      code = errors.API_400_BAD_REQUEST;
+      break;
+    case 401:
+      code = errors.API_401_UNAUTHORIZED;
+      break;
+    case 403:
+      code = errors.API_403_FORBIDDEN;
+      break;
+    default:
+      code = `API_${response.status}_UNKNOWN`;
+      break;
   }
-  throw new Error("Network response was not ok.");
+
+  throw new Error(`${message} - Code: ${code}`);
 }
 
-// In a real app, would likely call an error logging service.
 export function handleError(error) {
-  // eslint-disable-next-line no-console
-  console.error("API call failed. " + error);
-  throw error;
+  throw new Error(`${error} - Code: ${errors.API_ERROR}`);
 }
