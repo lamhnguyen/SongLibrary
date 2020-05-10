@@ -37,6 +37,7 @@
 | auth0-js         | Client Side JavaScript toolkit for Auth0 API         |
 | dotenv-webpack   | Handle environment variables                         |
 | jsonwebtoken     | An implementation of JSON Web Tokens                 |
+| DOMPurify        | Sanitizer for HTML, MathML and SVG                   |
 
 ### Development Dependencies
 

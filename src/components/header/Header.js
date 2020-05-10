@@ -1,12 +1,21 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { resetApp } from "../../global";
 import AuthContext from "../../security/AuthContext";
+import { changeSongSearch } from "../../actions/songActions";
 import "./Header.css";
 
-const Header = () => {
+export const Header = ({ search, changeSongSearch }) => {
   const auth = useContext(AuthContext);
+
+  const [searchKeyword, setSearchKeyword] = useState(search || "");
+
+  useEffect(() => {
+    setSearchKeyword(search);
+  }, [search]);
 
   function handleLogIn(e) {
     e.preventDefault();
@@ -16,6 +25,15 @@ const Header = () => {
   function handleLogOut(e) {
     e.preventDefault();
     auth.logout();
+  }
+
+  function handleChange(e) {
+    setSearchKeyword(e.target.value);
+  }
+
+  function handleSearchSubmit(e) {
+    e.preventDefault();
+    changeSongSearch(searchKeyword);
   }
 
   return (
@@ -100,12 +118,17 @@ const Header = () => {
             </li>
           </ul>
         </div>
-        <form className="d-inline my-auto float-left w-50" method="get">
+        <form
+          className="d-inline my-auto float-left w-50"
+          onSubmit={handleSearchSubmit}
+        >
           <div className="input-group m-0">
             <input
               type="search"
               className="form-control biginput"
               placeholder="Search"
+              value={searchKeyword}
+              onChange={handleChange}
             ></input>
             <span className="input-group-append">
               <button
@@ -122,4 +145,19 @@ const Header = () => {
   );
 };
 
-export default Header;
+Header.propTypes = {
+  search: PropTypes.string,
+  changeSongSearch: PropTypes.func.isRequired,
+};
+
+function mapStateToProps(state) {
+  return {
+    search: state.songFilter.search,
+  };
+}
+
+const mapDispatchToProps = {
+  changeSongSearch,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

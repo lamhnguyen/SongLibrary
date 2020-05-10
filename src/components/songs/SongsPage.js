@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { isEqual } from "lodash";
 import {
   loadSongs,
   changeSongView,
@@ -43,10 +42,26 @@ export function SongsPage({
   const prevFilter = usePrevious(filter);
 
   useEffect(() => {
-    if (songs.length === 0 || isEqual(prevFilter, filter) === false) {
+    if (!songs || filterChanged(prevFilter, filter) === true) {
       loadSongs(filter);
     }
   }, [songs, filter]);
+
+  function filterChanged(prevFilter, filter) {
+    return (
+      (prevFilter.author ? prevFilter.author.id : 0) !==
+        (filter.author ? filter.author.id : 0) ||
+      (prevFilter.poet ? prevFilter.poet.id : 0) !==
+        (filter.poet ? filter.poet.id : 0) ||
+      (prevFilter.artist ? prevFilter.artist.id : 0) !==
+        (filter.artist ? filter.artist.id : 0) ||
+      prevFilter.sort !== filter.sort ||
+      prevFilter.order !== filter.order ||
+      prevFilter.start !== filter.start ||
+      prevFilter.search !== filter.search ||
+      prevFilter.view !== filter.view
+    );
+  }
 
   function handleChangeView(view) {
     changeSongView(view);
@@ -95,13 +110,14 @@ export function SongsPage({
           author={filter.author}
           artist={filter.artist}
           poet={filter.poet}
+          search={filter.search}
           onChangeView={handleChangeView}
           onResetFilter={handleResetFilter}
         />
       </div>
       <div className="row pt-3">
         <SongList
-          songs={songs}
+          songs={songs || []}
           sort={filter.sort}
           order={filter.order}
           onChangeAuthor={handleChangeAuthor}
@@ -123,7 +139,7 @@ export function SongsPage({
 }
 
 SongsPage.propTypes = {
-  songs: PropTypes.array.isRequired,
+  songs: PropTypes.array,
   filter: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
   loadSongs: PropTypes.func.isRequired,

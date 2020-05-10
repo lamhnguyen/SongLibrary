@@ -1,6 +1,8 @@
 export default {
-  songs: [],
+  song: null,
+  songs: null,
   songFilter: {
+    search: "",
     view: "random",
     author: null,
     poet: null,

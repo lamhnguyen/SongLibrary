@@ -10,6 +10,10 @@ import {
   faEye,
   faThumbsUp,
   faTimes,
+  faArrowDown,
+  faArrowUp,
+  faPrint,
+  faFont,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -22,5 +26,9 @@ library.add(
   faSortDown,
   faEye,
   faThumbsUp,
-  faTimes
+  faTimes,
+  faArrowDown,
+  faArrowUp,
+  faPrint,
+  faFont
 );

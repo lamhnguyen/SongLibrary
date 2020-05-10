@@ -1,10 +1,10 @@
 import React from "react";
 
-const ManageSongPage = () => (
+const EditSongPage = () => (
   <div>
     <h2>Manage song</h2>
     <p>Hello</p>
   </div>
 );
 
-export default ManageSongPage;
+export default EditSongPage;

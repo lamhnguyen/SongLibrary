@@ -9,13 +9,14 @@ import Auth from "../security/Auth";
 import AuthContext from "../security/AuthContext";
 import AuthCallback from "./AuthCallback";
 import PrivateRoute from "./PrivateRoute";
-import Header from "./header/Header";
+import Header from "./header/Header"; // eslint-disable-line import/no-named-as-default
 import Footer from "./footer/Footer";
 import Alert from "./alert/Alert";
 import PageNotFound from "./PageNotFound";
 import AboutPage from "./about/AboutPage";
 import SongsPage from "./songs/SongsPage"; // eslint-disable-line import/no-named-as-default
-import ManageSongPage from "./songs/ManageSongPage";
+import ViewSongPage from "./songs/ViewSongPage"; // eslint-disable-line import/no-named-as-default
+import EditSongPage from "./songs/EditSongPage";
 import ErrorBoundary from "./ErrorBoundary";
 
 export function App(props) {
@@ -37,9 +38,9 @@ export function App(props) {
               render={(props) => <AuthCallback auth={auth} {...props} />}
             />
             <Route path="/about" component={AboutPage} />
-            <Route path="/song" component={SongsPage} />
-            <Route path="/song/:slug" component={ManageSongPage} />
-            <Route path="/song" component={ManageSongPage} />
+            <Route path="/song/:slug" component={EditSongPage} />
+            <Route path="/song" component={EditSongPage} />
+            <Route path="/:slug" component={ViewSongPage} />
             <PrivateRoute path="/private" component={AboutPage} />
             <Route component={PageNotFound} />
           </Switch>

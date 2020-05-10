@@ -57,6 +57,7 @@ const SongList = ({
   onChangePoet,
   onChangeArtist,
   onChangeSortOrder,
+  onDeleteSong,
 }) => {
   const auth = useContext(AuthContext);
 
@@ -98,25 +99,27 @@ const SongList = ({
             return (
               <tr key={song.id}>
                 <td>
-                  <Link to="#">
+                  <Link to={`/${song.slug}`}>
                     <strong>{song.name}</strong>
                   </Link>
                   {auth.isAuthenticated() && auth.isAdmin() && (
                     <>
-                      <a
+                      <Link
+                        to={`/song/${song.slug}`}
                         className="edit pl-2"
                         title="Edit"
                         data-toggle="tooltip"
                       >
                         <FontAwesomeIcon icon="edit" color="#5cb85c" />
-                      </a>
-                      <a
+                      </Link>
+                      <Link
+                        to="/"
                         className="delete pl-2"
                         title="Delete"
                         data-toggle="tooltip"
                       >
                         <FontAwesomeIcon icon="trash" color="#d9534f" />
-                      </a>
+                      </Link>
                     </>
                   )}
                   <br />
@@ -182,6 +185,7 @@ SongList.propTypes = {
   onChangePoet: PropTypes.func.isRequired,
   onChangeArtist: PropTypes.func.isRequired,
   onChangeSortOrder: PropTypes.func.isRequired,
+  onDeleteSong: PropTypes.func.isRequired,
 };
 
 export default SongList;

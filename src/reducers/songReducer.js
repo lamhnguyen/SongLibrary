@@ -1,18 +1,16 @@
 import * as types from "../actions/actionTypes";
 import initialState from "../store/initialState";
 
-export default function songReducer(state = initialState.songs, action) {
+export default function songReducer(state = initialState.song, action) {
   switch (action.type) {
-    case types.LOAD_SONGS_SUCCESS:
-      return action.result.songs;
+    case types.LOAD_SONG_SUCCESS:
+      return action.song;
     case types.CREATE_SONG_SUCCESS:
-      return [...state, { ...action.song }];
+      return action.song;
     case types.UPDATE_SONG_SUCCESS:
-      return state.map((song) =>
-        song.id === action.song.id ? action.song : song
-      );
+      return action.song;
     case types.DELETE_SONG_SUCCESS:
-      return state.filter((song) => song.id !== action.song.id);
+      return null;
     default:
       return state;
   }

@@ -6,6 +6,10 @@ export function loadSongsSuccess(result) {
   return { type: types.LOAD_SONGS_SUCCESS, result };
 }
 
+export function loadSongSuccess(song) {
+  return { type: types.LOAD_SONG_SUCCESS, song };
+}
+
 export function createSongSuccess(song) {
   return { type: types.CREATE_SONG_SUCCESS, song };
 }
@@ -16,22 +20,6 @@ export function updateSongSuccess(song) {
 
 export function deleteSongSuccess(song) {
   return { type: types.DELETE_SONG_SUCCESS, song };
-}
-
-// thunk action creator
-export function loadSongs(filter) {
-  return function (dispatch) {
-    dispatch(apiCallBegin());
-    return songApi
-      .getSongs(filter)
-      .then((result) => {
-        dispatch(loadSongsSuccess(result));
-      })
-      .catch((error) => {
-        const errMsg = "loadSongs failed - Error: " + error.message;
-        dispatch(apiCallError(errMsg));
-      });
-  };
 }
 
 export function changeSongView(view) {
@@ -58,10 +46,45 @@ export function changeSongArtist(artist) {
   return { type: types.CHANGE_SONG_ARTIST, artist };
 }
 
+export function changeSongSearch(search) {
+  return { type: types.CHANGE_SONG_SEARCH, search };
+}
+
 export function changeSongSortOrder(sort, order) {
   return { type: types.CHANGE_SONG_SORT_ORDER, sort, order };
 }
 
 export function resetSongFilter() {
   return { type: types.RESET_SONG_FILTER };
+}
+
+// thunk action creator
+export function loadSongs(filter) {
+  return function (dispatch) {
+    dispatch(apiCallBegin());
+    return songApi
+      .getSongs(filter)
+      .then((result) => {
+        dispatch(loadSongsSuccess(result));
+      })
+      .catch((error) => {
+        const errMsg = "loadSongs failed - Error: " + error.message;
+        dispatch(apiCallError(errMsg));
+      });
+  };
+}
+
+export function loadSong(slug) {
+  return function (dispatch) {
+    dispatch(apiCallBegin());
+    return songApi
+      .getSong(slug)
+      .then((song) => {
+        dispatch(loadSongSuccess(song));
+      })
+      .catch((error) => {
+        const errMsg = "loadSong failed - Error: " + error.message;
+        dispatch(apiCallError(errMsg));
+      });
+  };
 }

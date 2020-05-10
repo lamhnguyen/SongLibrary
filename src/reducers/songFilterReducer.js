@@ -13,30 +13,49 @@ export default function songReducer(state = initialState.songFilter, action) {
       };
     }
     case types.CHANGE_SONG_VIEW:
-      return { ...state, view: action.view };
+      return {
+        ...state,
+        view: action.view,
+        author: null,
+        poet: null,
+        artist: null,
+        search: "",
+      };
     case types.CHANGE_SONG_AUTHOR:
       return {
         ...state,
-        author: action.author,
         view: "",
+        author: action.author,
         poet: null,
         artist: null,
+        search: "",
       };
     case types.CHANGE_SONG_POET:
       return {
         ...state,
-        poet: action.poet,
         view: "",
         author: null,
+        poet: action.poet,
         artist: null,
+        search: "",
       };
     case types.CHANGE_SONG_ARTIST:
       return {
-        ...state,
-        artist: action.artist,
+        ...initialState.songFilter,
         view: "",
         author: null,
         poet: null,
+        artist: action.artist,
+        search: "",
+      };
+    case types.CHANGE_SONG_SEARCH:
+      return {
+        ...initialState.songFilter,
+        view: "",
+        author: null,
+        poet: null,
+        artist: null,
+        search: action.search,
       };
     case types.CHANGE_SONG_SORT_ORDER:
       return { ...state, sort: action.sort, order: action.order };

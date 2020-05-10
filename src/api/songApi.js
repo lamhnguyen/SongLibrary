@@ -1,4 +1,5 @@
 import { handleResponse, handleError } from "./apiHelper";
+import { slugify } from "../core/helper";
 
 const baseUrl = process.env.API_URL + "/songs/";
 
@@ -8,11 +9,15 @@ export function getSongs(filter) {
     (filter.view ? `&view=${filter.view}` : "") +
     (filter.author ? `&author=${filter.author.slug}` : "") +
     (filter.poet ? `&poet=${filter.poet.slug}` : "") +
-    (filter.artist ? `&artist=${filter.artist.slug}` : "");
+    (filter.artist ? `&artist=${filter.artist.slug}` : "") +
+    (filter.search ? `&search=${slugify(filter.search)}` : "");
 
   const url = baseUrl + queryParams;
-  console.log(url);
+  return fetch(url).then(handleResponse).catch(handleError);
+}
 
+export function getSong(slug) {
+  const url = baseUrl + slug;
   return fetch(url).then(handleResponse).catch(handleError);
 }
 

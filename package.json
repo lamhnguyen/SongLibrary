@@ -41,6 +41,7 @@
     "@fortawesome/react-fontawesome": "^0.1.9",
     "auth0-js": "^9.13.2",
     "bootstrap": "4.4.1",
+    "dompurify": "^2.0.11",
     "dotenv-webpack": "^1.7.0",
     "immer": "6.0.3",
     "jsonwebtoken": "^8.5.1",

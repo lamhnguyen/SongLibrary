@@ -51,6 +51,7 @@ const SongFilter = ({
   author,
   poet,
   artist,
+  search,
   onChangeView,
   onResetFilter,
 }) => {
@@ -60,6 +61,8 @@ const SongFilter = ({
 
   if (artist) return renderName("Artist", artist.name, onResetFilter);
 
+  if (search) return renderName("Search", search, onResetFilter);
+
   return renderViews(view, onChangeView);
 };
 
@@ -68,6 +71,7 @@ SongFilter.propTypes = {
   author: PropTypes.object,
   poet: PropTypes.object,
   artist: PropTypes.object,
+  search: PropTypes.string,
   onChangeView: PropTypes.func.isRequired,
   onResetFilter: PropTypes.func.isRequired,
 };
