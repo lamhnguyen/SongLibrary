@@ -8,10 +8,12 @@ import {
   changeSongAuthor,
   changeSongPoet,
   changeSongArtist,
+  deleteSong,
 } from "../../actions/songActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AuthContext from "../../security/AuthContext";
 import { createMarkup } from "../../core/helper";
+import confirm from "../confirm";
 import { formatLyrics, transpose, transposeLyrics } from "./Song.js";
 import "./Song.css";
 
@@ -31,6 +33,8 @@ export function ViewSongPage({
   changeSongAuthor,
   changeSongPoet,
   changeSongArtist,
+  deleteSong,
+  history,
   ...props
 }) {
   const auth = useContext(AuthContext);
@@ -109,6 +113,18 @@ export function ViewSongPage({
     newWin.document.close();
   }
 
+  async function handleDeleteSong(event, song) {
+    event.preventDefault();
+
+    const result = await confirm.show({
+      message: `Are you sure of delete '${song.name}'?`,
+    });
+    if (result) {
+      deleteSong(song.id);
+      history.push("/");
+    }
+  }
+
   if (isLoading)
     return (
       <div className="container">
@@ -126,7 +142,12 @@ export function ViewSongPage({
               <a className="edit pl-2" title="Edit" data-toggle="tooltip">
                 <FontAwesomeIcon icon="edit" color="#5cb85c" />
               </a>
-              <a className="delete pl-2" title="Delete" data-toggle="tooltip">
+              <a
+                className="delete pl-2"
+                title="Delete"
+                data-toggle="tooltip"
+                onClick={(e) => handleDeleteSong(e, song)}
+              >
                 <FontAwesomeIcon icon="trash" color="#d9534f" />
               </a>
             </span>
@@ -240,6 +261,8 @@ ViewSongPage.propTypes = {
   changeSongAuthor: PropTypes.func.isRequired,
   changeSongPoet: PropTypes.func.isRequired,
   changeSongArtist: PropTypes.func.isRequired,
+  deleteSong: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
       slug: PropTypes.string.isRequired,
@@ -259,6 +282,7 @@ const mapDispatchToProps = {
   changeSongAuthor,
   changeSongPoet,
   changeSongArtist,
+  deleteSong,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewSongPage);

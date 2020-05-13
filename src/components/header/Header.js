@@ -42,15 +42,7 @@ export const Header = ({ search, changeSongSearch }) => {
         <Link to="/" className="navbar-brand" onClick={resetApp}>
           <h3>Song Library</h3>
         </Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#menu"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="navbar-collapse collapse" id="menu">
+        <div className="navbar-collapse" id="navBarMenu">
           <ul className="navbar-nav mr-auto pr-4">
             {auth.isAuthenticated() && auth.isAdmin() && (
               <li className="nav-item dropdown">
@@ -117,29 +109,29 @@ export const Header = ({ search, changeSongSearch }) => {
               </div>
             </li>
           </ul>
+          <form
+            className="d-inline my-auto float-left w-50"
+            onSubmit={handleSearchSubmit}
+          >
+            <div className="input-group m-0">
+              <input
+                type="search"
+                className="form-control biginput"
+                placeholder="Search"
+                value={searchKeyword}
+                onChange={handleChange}
+              ></input>
+              <span className="input-group-append">
+                <button
+                  className="btn btn-primary border border-left-0"
+                  type="submit"
+                >
+                  <FontAwesomeIcon icon="search" />
+                </button>
+              </span>
+            </div>
+          </form>
         </div>
-        <form
-          className="d-inline my-auto float-left w-50"
-          onSubmit={handleSearchSubmit}
-        >
-          <div className="input-group m-0">
-            <input
-              type="search"
-              className="form-control biginput"
-              placeholder="Search"
-              value={searchKeyword}
-              onChange={handleChange}
-            ></input>
-            <span className="input-group-append">
-              <button
-                className="btn btn-primary border border-left-0"
-                type="submit"
-              >
-                <FontAwesomeIcon icon="search" />
-              </button>
-            </span>
-          </div>
-        </form>
       </div>
     </nav>
   );

@@ -11,11 +11,13 @@ import {
   changeSongPage,
   changeSongPageSize,
   resetSongFilter,
+  deleteSong,
 } from "../../actions/songActions";
 import SongFilter from "./SongFilter";
 import SongList from "./SongList";
 import Spinner from "../common/Spinner";
 import Pagination from "../common/Pagination";
+import confirm from "../confirm";
 
 function usePrevious(value) {
   const ref = useRef();
@@ -38,6 +40,7 @@ export function SongsPage({
   changeSongPage,
   changeSongPageSize,
   resetSongFilter,
+  deleteSong,
 }) {
   const prevFilter = usePrevious(filter);
 
@@ -48,6 +51,7 @@ export function SongsPage({
   }, [songs, filter]);
 
   function filterChanged(prevFilter, filter) {
+    if (!prevFilter) return true;
     return (
       (prevFilter.author ? prevFilter.author.id : 0) !==
         (filter.author ? filter.author.id : 0) ||
@@ -95,6 +99,15 @@ export function SongsPage({
     resetSongFilter();
   }
 
+  async function handleDeleteSong(song) {
+    const result = await confirm.show({
+      message: `Are you sure of delete '${song.name}'?`,
+    });
+    if (result) {
+      deleteSong(song.id);
+    }
+  }
+
   if (isLoading)
     return (
       <div className="container">
@@ -103,38 +116,41 @@ export function SongsPage({
     );
 
   return (
-    <div className="container">
-      <div className="row">
-        <SongFilter
-          view={filter.view}
-          author={filter.author}
-          artist={filter.artist}
-          poet={filter.poet}
-          search={filter.search}
-          onChangeView={handleChangeView}
-          onResetFilter={handleResetFilter}
-        />
+    <>
+      <div className="container">
+        <div className="row">
+          <SongFilter
+            view={filter.view}
+            author={filter.author}
+            artist={filter.artist}
+            poet={filter.poet}
+            search={filter.search}
+            onChangeView={handleChangeView}
+            onResetFilter={handleResetFilter}
+          />
+        </div>
+        <div className="row pt-3">
+          <SongList
+            songs={songs || []}
+            sort={filter.sort}
+            order={filter.order}
+            onChangeAuthor={handleChangeAuthor}
+            onChangePoet={handleChangePoet}
+            onChangeArtist={handleChangeArtist}
+            onChangeSortOrder={handleChangeSortOrder}
+            onDeleteSong={handleDeleteSong}
+          />
+        </div>
+        <div className="row d-flex justify-content-between">
+          <Pagination
+            start={filter.start}
+            pageSize={filter.pageSize}
+            onChangePage={handleChangePage}
+            onChangePageSize={handleChangePageSize}
+          />
+        </div>
       </div>
-      <div className="row pt-3">
-        <SongList
-          songs={songs || []}
-          sort={filter.sort}
-          order={filter.order}
-          onChangeAuthor={handleChangeAuthor}
-          onChangePoet={handleChangePoet}
-          onChangeArtist={handleChangeArtist}
-          onChangeSortOrder={handleChangeSortOrder}
-        />
-      </div>
-      <div className="row d-flex justify-content-between">
-        <Pagination
-          start={filter.start}
-          pageSize={filter.pageSize}
-          onChangePage={handleChangePage}
-          onChangePageSize={handleChangePageSize}
-        />
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -151,6 +167,7 @@ SongsPage.propTypes = {
   changeSongSortOrder: PropTypes.func.isRequired,
   changeSongPageSize: PropTypes.func.isRequired,
   resetSongFilter: PropTypes.func.isRequired,
+  deleteSong: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -171,6 +188,7 @@ const mapDispatchToProps = {
   changeSongPage,
   changeSongPageSize,
   resetSongFilter,
+  deleteSong,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SongsPage);

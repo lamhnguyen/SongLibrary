@@ -41,3 +41,5 @@
     - Understanding React + Redux Errors With Sentry and FullStory - Patrick Brandt (https://bionic.fullstory.com/react-redux-errors-with-fullstory-and-sentry/)
     - Eloquent Javascript book (https://eloquentjavascript.net/index.html)
     - React - Apply classes conditionally (https://www.pluralsight.com/guides/applying-classes-conditionally-react)
+    - React Confirm Dialog as a service - Alexys Gonzales (https://medium.com/quadminds/react-confirm-dialog-as-service-8929c88a6702)
+    - How can I display a modal dialog in Redux that performs asynchronous actions? - Dan Abramov (https://stackoverflow.com/questions/35623656/how-can-i-display-a-modal-dialog-in-redux-that-performs-asynchronous-actions)

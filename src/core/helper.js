@@ -1,4 +1,4 @@
-import { attempt, kebabCase } from "lodash";
+import { attempt, kebabCase, endsWith as _endsWith } from "lodash";
 import DOMPurify from "dompurify";
 
 export const errorToString = (error) => {
@@ -127,6 +127,10 @@ export const removeDiacritics = (str) => {
   return str;
 }
 
-export function createMarkup(html) {
+export const createMarkup = (html) => {
   return { __html: DOMPurify.sanitize(html) };
-}
+};
+
+export const endsWith = (text, search) => {
+  return _endsWith(text, search);
+};

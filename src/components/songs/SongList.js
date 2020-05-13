@@ -117,6 +117,7 @@ const SongList = ({
                         className="delete pl-2"
                         title="Delete"
                         data-toggle="tooltip"
+                        onClick={() => onDeleteSong(song)}
                       >
                         <FontAwesomeIcon icon="trash" color="#d9534f" />
                       </Link>

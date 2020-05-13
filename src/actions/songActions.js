@@ -18,8 +18,8 @@ export function updateSongSuccess(song) {
   return { type: types.UPDATE_SONG_SUCCESS, song };
 }
 
-export function deleteSongSuccess(song) {
-  return { type: types.DELETE_SONG_SUCCESS, song };
+export function deleteSongSuccess(id) {
+  return { type: types.DELETE_SONG_SUCCESS, id };
 }
 
 export function changeSongView(view) {
@@ -84,6 +84,21 @@ export function loadSong(slug) {
       })
       .catch((error) => {
         const errMsg = "loadSong failed - Error: " + error.message;
+        dispatch(apiCallError(errMsg));
+      });
+  };
+}
+
+export function deleteSong(id) {
+  return function (dispatch) {
+    dispatch(apiCallBegin());
+    return songApi
+      .deleteSong(id)
+      .then(() => {
+        dispatch(deleteSongSuccess(id));
+      })
+      .catch((error) => {
+        const errMsg = "deleteSong failed - Error: " + error.message;
         dispatch(apiCallError(errMsg));
       });
   };
