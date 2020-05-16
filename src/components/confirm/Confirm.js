@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import PropTypes from "prop-types";
 import "./confirm.css";
 
-let resolve;
+let confirmResolve;
 const defaultProps = {
   title: "Confirmation",
   message: "Are you sure?",
@@ -31,20 +31,20 @@ class Confirm extends Component {
 
   handleCancel() {
     this.setState({ isOpen: false });
-    resolve(false);
+    confirmResolve(false);
   }
 
   handleConfirm() {
     this.setState({ isOpen: false });
-    resolve(true);
+    confirmResolve(true);
   }
 
   show(props = {}) {
     const confirmProps = { ...this.props.confirmProps, ...props };
     this.setState({ isOpen: true, confirmProps });
 
-    return new Promise((res) => {
-      resolve = res;
+    return new Promise((resolve /*, reject*/) => {
+      confirmResolve = resolve;
     });
   }
 

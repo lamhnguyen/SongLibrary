@@ -20,14 +20,13 @@ import "./Song.css";
 const MIN_FONT_SIZE = 1;
 const MAX_FONT_SIZE = 1.4;
 
-const SCROLL_STEP = 1;
-const SCROLL_TIMEOUT = 200; // ms
+const SCROLL_STEP = 2;
+const SCROLL_TIMEOUT = 250; // ms
 
 let scrollTimer;
 let scrollTop;
 
 export function ViewSongPage({
-  song,
   isLoading,
   loadSong,
   changeSongAuthor,
@@ -39,22 +38,24 @@ export function ViewSongPage({
 }) {
   const auth = useContext(AuthContext);
 
+  let [song, setSong] = useState(props.song);
+
   let [fontSize, setFontSize] = useState(MIN_FONT_SIZE);
   let [key, setKey] = useState("");
   let [lyrics, setLyrics] = useState("");
 
+  // Page load
   useEffect(() => {
-    const slug = props.match.params.slug;
-
-    if (!song || song.slug !== slug) {
-      loadSong(slug);
+    if (!song) {
+      const slug = props.match.params.slug;
+      loadSong(slug)
+        .then((s) => setSong(s))
+        .catch(history.push("/"));
     }
 
-    if (song) {
-      setKey(song.key.name);
-      setLyrics(song.lyrics);
-    }
-  }, [song]);
+    setKey(song.key.name);
+    setLyrics(song.lyrics);
+  }, []);
 
   function changeFontSize() {
     if (fontSize >= MAX_FONT_SIZE) setFontSize(MIN_FONT_SIZE);
@@ -91,7 +92,7 @@ export function ViewSongPage({
       scrollTop = newScrollTop;
       scrollTimer = setTimeout(() => {
         startScrolling();
-      }, SCROLL_TIMEOUT / SCROLL_STEP);
+      }, SCROLL_TIMEOUT);
     }
   }
 
@@ -113,15 +114,14 @@ export function ViewSongPage({
     newWin.document.close();
   }
 
-  async function handleDeleteSong(event, song) {
+  async function handleDelete(event, song) {
     event.preventDefault();
 
     const result = await confirm.show({
       message: `Are you sure of delete '${song.name}'?`,
     });
     if (result) {
-      deleteSong(song.id);
-      history.push("/");
+      deleteSong(song.id).then(() => history.push("/"));
     }
   }
 
@@ -139,14 +139,20 @@ export function ViewSongPage({
           <span className="h3">{song.name}</span>
           {auth.isAuthenticated() && auth.isAdmin() && (
             <span className="align-text-bottom">
-              <a className="edit pl-2" title="Edit" data-toggle="tooltip">
+              <a
+                className="edit pl-2"
+                title="Edit"
+                data-toggle="tooltip"
+                style={{ cursor: "pointer" }}
+              >
                 <FontAwesomeIcon icon="edit" color="#5cb85c" />
               </a>
               <a
                 className="delete pl-2"
                 title="Delete"
                 data-toggle="tooltip"
-                onClick={(e) => handleDeleteSong(e, song)}
+                style={{ cursor: "pointer" }}
+                onClick={(e) => handleDelete(e, song)}
               >
                 <FontAwesomeIcon icon="trash" color="#d9534f" />
               </a>
@@ -270,9 +276,12 @@ ViewSongPage.propTypes = {
   }),
 };
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  const slug = ownProps.match.params.slug;
+  const song = state.songs ? state.songs.find((s) => s.slug === slug) : null;
+
   return {
-    song: state.song,
+    song: song,
     isLoading: state.apiStatus.count > 0,
   };
 }

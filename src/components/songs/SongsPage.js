@@ -13,6 +13,12 @@ import {
   resetSongFilter,
   deleteSong,
 } from "../../actions/songActions";
+import { loadKeys } from "../../actions/keyActions";
+import { loadGenres } from "../../actions/genreActions";
+import { loadAuthors } from "../../actions/authorActions";
+import { loadPoets } from "../../actions/poetActions";
+import { loadArtists } from "../../actions/artistActions";
+import { expandSong } from "./helper";
 import SongFilter from "./SongFilter";
 import SongList from "./SongList";
 import Spinner from "../common/Spinner";
@@ -32,6 +38,11 @@ export function SongsPage({
   filter,
   isLoading,
   loadSongs,
+  loadKeys,
+  loadGenres,
+  loadAuthors,
+  loadPoets,
+  loadArtists,
   changeSongView,
   changeSongAuthor,
   changeSongPoet,
@@ -44,14 +55,27 @@ export function SongsPage({
 }) {
   const prevFilter = usePrevious(filter);
 
+  // Page load
   useEffect(() => {
-    if (!songs || filterChanged(prevFilter, filter) === true) {
+    loadKeys();
+    loadGenres();
+
+    loadAuthors();
+    loadPoets();
+    loadArtists();
+
+    loadSongs(filter);
+  }, []);
+
+  // Filter changed
+  useEffect(() => {
+    if (filterChanged(prevFilter, filter) === true) {
       loadSongs(filter);
     }
-  }, [songs, filter]);
+  }, [filter]);
 
   function filterChanged(prevFilter, filter) {
-    if (!prevFilter) return true;
+    if (!prevFilter) return false;
     return (
       (prevFilter.author ? prevFilter.author.id : 0) !==
         (filter.author ? filter.author.id : 0) ||
@@ -63,7 +87,8 @@ export function SongsPage({
       prevFilter.order !== filter.order ||
       prevFilter.start !== filter.start ||
       prevFilter.search !== filter.search ||
-      prevFilter.view !== filter.view
+      prevFilter.view !== filter.view ||
+      prevFilter.pageSize !== filter.pageSize
     );
   }
 
@@ -159,6 +184,11 @@ SongsPage.propTypes = {
   filter: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
   loadSongs: PropTypes.func.isRequired,
+  loadKeys: PropTypes.func.isRequired,
+  loadGenres: PropTypes.func.isRequired,
+  loadAuthors: PropTypes.func.isRequired,
+  loadPoets: PropTypes.func.isRequired,
+  loadArtists: PropTypes.func.isRequired,
   changeSongView: PropTypes.func.isRequired,
   changeSongPage: PropTypes.func.isRequired,
   changeSongAuthor: PropTypes.func.isRequired,
@@ -171,8 +201,17 @@ SongsPage.propTypes = {
 };
 
 function mapStateToProps(state) {
+  const songs =
+    !state.keys ||
+    !state.genres ||
+    !state.authors ||
+    !state.poets ||
+    !state.artists ||
+    !state.songs
+      ? []
+      : state.songs.map((s) => expandSong(s, state));
   return {
-    songs: state.songs,
+    songs,
     filter: state.songFilter,
     isLoading: state.apiStatus.count > 0,
   };
@@ -180,6 +219,11 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
   loadSongs,
+  loadKeys,
+  loadGenres,
+  loadAuthors,
+  loadPoets,
+  loadArtists,
   changeSongView,
   changeSongAuthor,
   changeSongPoet,

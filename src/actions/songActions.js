@@ -1,3 +1,4 @@
+import * as api from "../api/api";
 import * as types from "./actionTypes";
 import { apiCallBegin, apiCallError } from "./apiActions";
 import * as songApi from "../api/songApi";
@@ -11,7 +12,7 @@ export function loadSongSuccess(song) {
 }
 
 export function createSongSuccess(song) {
-  return { type: types.CREATE_SONG_SUCCESS, song };
+  return { type: types.CREATE_SONG_SUCCESS, song }; // types.SUCCESS(api.CREATE_SONG)
 }
 
 export function updateSongSuccess(song) {
@@ -61,7 +62,7 @@ export function resetSongFilter() {
 // thunk action creator
 export function loadSongs(filter) {
   return function (dispatch) {
-    dispatch(apiCallBegin());
+    dispatch(apiCallBegin(api.LOAD_SONGS));
     return songApi
       .getSongs(filter)
       .then((result) => {
@@ -69,14 +70,14 @@ export function loadSongs(filter) {
       })
       .catch((error) => {
         const errMsg = "loadSongs failed - Error: " + error.message;
-        dispatch(apiCallError(errMsg));
+        dispatch(apiCallError(api.LOAD_SONGS, errMsg));
       });
   };
 }
 
 export function loadSong(slug) {
   return function (dispatch) {
-    dispatch(apiCallBegin());
+    dispatch(apiCallBegin(api.LOAD_SONG));
     return songApi
       .getSong(slug)
       .then((song) => {
@@ -84,14 +85,14 @@ export function loadSong(slug) {
       })
       .catch((error) => {
         const errMsg = "loadSong failed - Error: " + error.message;
-        dispatch(apiCallError(errMsg));
+        dispatch(apiCallError(api.LOAD_SONG, errMsg));
       });
   };
 }
 
 export function deleteSong(id) {
   return function (dispatch) {
-    dispatch(apiCallBegin());
+    dispatch(apiCallBegin(api.DELETE_SONG));
     return songApi
       .deleteSong(id)
       .then(() => {
@@ -99,7 +100,25 @@ export function deleteSong(id) {
       })
       .catch((error) => {
         const errMsg = "deleteSong failed - Error: " + error.message;
-        dispatch(apiCallError(errMsg));
+        dispatch(apiCallError(api.DELETE_SONG, errMsg));
+      });
+  };
+}
+
+export function saveSong(song) {
+  const saveApi = song.id ? api.UPDATE_SONG : api.CREATE_SONG;
+  return function (dispatch) {
+    dispatch(apiCallBegin(saveApi));
+    return songApi
+      .saveSong(song)
+      .then((savedSong) => {
+        dispatch(
+          song.id ? updateSongSuccess(savedSong) : createSongSuccess(savedSong)
+        );
+      })
+      .catch((error) => {
+        const errMsg = "saveSong failed - Error: " + error.message;
+        dispatch(apiCallError(saveApi, errMsg));
       });
   };
 }

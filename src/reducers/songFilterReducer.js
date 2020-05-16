@@ -20,6 +20,7 @@ export default function songReducer(state = initialState.songFilter, action) {
         poet: null,
         artist: null,
         search: "",
+        start: 0,
       };
     case types.CHANGE_SONG_AUTHOR:
       return {
@@ -29,6 +30,7 @@ export default function songReducer(state = initialState.songFilter, action) {
         poet: null,
         artist: null,
         search: "",
+        start: 0,
       };
     case types.CHANGE_SONG_POET:
       return {
@@ -38,6 +40,7 @@ export default function songReducer(state = initialState.songFilter, action) {
         poet: action.poet,
         artist: null,
         search: "",
+        start: 0,
       };
     case types.CHANGE_SONG_ARTIST:
       return {
@@ -47,6 +50,7 @@ export default function songReducer(state = initialState.songFilter, action) {
         poet: null,
         artist: action.artist,
         search: "",
+        start: 0,
       };
     case types.CHANGE_SONG_SEARCH:
       return {
@@ -56,13 +60,19 @@ export default function songReducer(state = initialState.songFilter, action) {
         poet: null,
         artist: null,
         search: action.search,
+        start: 0,
       };
     case types.CHANGE_SONG_SORT_ORDER:
-      return { ...state, sort: action.sort, order: action.order };
+      return {
+        ...state,
+        sort: action.sort,
+        order: action.order,
+        start: 0,
+      };
     case types.CHANGE_SONG_PAGE:
       return { ...state, start: action.start };
     case types.CHANGE_SONG_PAGE_SIZE:
-      return { ...state, pageSize: action.pageSize };
+      return { ...state, pageSize: action.pageSize, start: 0 };
     case types.RESET_SONG_FILTER:
       return initialState.songFilter;
     default:

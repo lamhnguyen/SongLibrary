@@ -43,3 +43,8 @@
     - React - Apply classes conditionally (https://www.pluralsight.com/guides/applying-classes-conditionally-react)
     - React Confirm Dialog as a service - Alexys Gonzales (https://medium.com/quadminds/react-confirm-dialog-as-service-8929c88a6702)
     - How can I display a modal dialog in Redux that performs asynchronous actions? - Dan Abramov (https://stackoverflow.com/questions/35623656/how-can-i-display-a-modal-dialog-in-redux-that-performs-asynchronous-actions)
+    - How to reset the state of a Redux store? - Dan Abramov (https://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store)
+    - Async JavaScript: From Callbacks, to Promises, to Async/Await - Tyler McGinnis (https://tylermcginnis.com/async-javascript-from-callbacks-to-promises-to-async-await/)
+    - React Hooks cheat sheet: Unlock solutions to common problems - Ohans Emmanuel (https://blog.logrocket.com/react-hooks-cheat-sheet-unlock-solutions-to-common-problems-af4caf699e70/)
+    - Building forms using React — everything you need to know - Manjunath (https://www.codementor.io/@blizzerand/building-forms-using-react-everything-you-need-to-know-iz3eyoq4y)
+    - Clean Code vs. Dirty Code: React Best Practices - Donavon West (https://americanexpress.io/clean-code-dirty-code/)

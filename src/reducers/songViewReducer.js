@@ -6,8 +6,7 @@ export default function songViewReducer(state = initialState.songs, action) {
     case types.LOAD_SONGS_SUCCESS:
       return action.result.songs;
     case types.DELETE_SONG_SUCCESS:
-      console.log(action);
-      return state.filter((s) => s.id !== action.id);
+      return state.filter((song) => song.id !== action.id);
     default:
       return state;
   }

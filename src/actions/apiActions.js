@@ -1,16 +1,16 @@
 import * as types from "./actionTypes";
 import { logError } from "../api/logApi";
 
-export function apiCallBegin() {
-  return { type: types.API_CALL_BEGIN };
+export function apiCallBegin(api) {
+  return { type: types.API_BEGIN(api) };
 }
 
-export function apiCallError(errorMessage) {
+export function apiCallError(api, errorMessage) {
   // Handling errors in Redux action creators
   logError(errorMessage);
 
   return {
-    type: types.API_CALL_ERROR,
+    type: types.API_ERROR(api),
     errorMessage,
   };
 }
