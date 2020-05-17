@@ -5,7 +5,7 @@ import Spinner from "./common/Spinner";
 import { toUrl } from "../core/helper";
 
 const AuthCallback = ({ location }) => {
-  const auth = useContext(AuthContext);
+  const { auth } = useContext(AuthContext);
 
   useEffect(() => {
     // Handle authentication if expected values are in the URL.

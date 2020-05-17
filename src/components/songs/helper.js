@@ -12,7 +12,5 @@ export const expandSong = (song, state) => {
     ),
   };
 
-  console.log(expandedSong);
-
   return expandedSong;
 };

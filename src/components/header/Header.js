@@ -9,7 +9,7 @@ import { changeSongSearch } from "../../actions/songActions";
 import "./Header.css";
 
 export const Header = ({ search, changeSongSearch }) => {
-  const auth = useContext(AuthContext);
+  const { auth, isAuthenticated, isAdmin, name } = useContext(AuthContext);
 
   const [searchKeyword, setSearchKeyword] = useState(search || "");
 
@@ -44,7 +44,7 @@ export const Header = ({ search, changeSongSearch }) => {
         </Link>
         <div className="navbar-collapse" id="navBarMenu">
           <ul className="navbar-nav mr-auto pr-4">
-            {auth.isAuthenticated() && auth.isAdmin() && (
+            {isAuthenticated && isAdmin && (
               <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
@@ -82,12 +82,10 @@ export const Header = ({ search, changeSongSearch }) => {
                 aria-expanded="false"
               >
                 <FontAwesomeIcon icon="user" />
-                <span className="px-1">
-                  {auth.isAuthenticated() && auth.getName()}
-                </span>
+                <span className="px-1">{isAuthenticated && name}</span>
               </a>
               <div className="dropdown-menu m-0" aria-labelledby="menuUser">
-                {auth.isAuthenticated() == false && (
+                {isAuthenticated === false && (
                   <a
                     className="dropdown-item"
                     rel="nofollow"
@@ -96,7 +94,7 @@ export const Header = ({ search, changeSongSearch }) => {
                     Log in
                   </a>
                 )}
-                {auth.isAuthenticated() && (
+                {isAuthenticated && (
                   <a
                     className="dropdown-item"
                     to="#"

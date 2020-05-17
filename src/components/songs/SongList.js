@@ -57,9 +57,11 @@ const SongList = ({
   onChangePoet,
   onChangeArtist,
   onChangeSortOrder,
+  onViewSong,
+  onEditSong,
   onDeleteSong,
 }) => {
-  const auth = useContext(AuthContext);
+  const { isAuthenticated, isAdmin } = useContext(AuthContext);
 
   return (
     <div className="table-responsive">
@@ -99,16 +101,17 @@ const SongList = ({
             return (
               <tr key={song.id}>
                 <td>
-                  <Link to={`/${song.slug}`}>
+                  <Link to={`/${song.slug}`} onClick={() => onViewSong(song)}>
                     <strong>{song.name}</strong>
                   </Link>
-                  {auth.isAuthenticated() && auth.isAdmin() && (
+                  {isAuthenticated && isAdmin && (
                     <>
                       <Link
                         to={`/song/${song.slug}`}
                         className="edit pl-2"
                         title="Edit"
                         data-toggle="tooltip"
+                        onClick={() => onEditSong(song)}
                       >
                         <FontAwesomeIcon icon="edit" color="#5cb85c" />
                       </Link>
@@ -186,6 +189,8 @@ SongList.propTypes = {
   onChangePoet: PropTypes.func.isRequired,
   onChangeArtist: PropTypes.func.isRequired,
   onChangeSortOrder: PropTypes.func.isRequired,
+  onViewSong: PropTypes.func.isRequired,
+  onEditSong: PropTypes.func.isRequired,
   onDeleteSong: PropTypes.func.isRequired,
 };
 

@@ -6,6 +6,7 @@ export default function poetReducer(state = initialState.poets, action) {
     case types.LOAD_POETS_SUCCESS:
       return action.poets;
     case types.CREATE_POET_SUCCESS:
+    case types.CREATE_SONG_POET_SUCCESS:
       return [...state, { ...action.poet }];
     case types.UPDATE_POET_SUCCESS:
       return state.map((poet) =>

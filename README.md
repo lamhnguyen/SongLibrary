@@ -38,7 +38,7 @@
 | dotenv-webpack   | Handle environment variables                         |
 | jsonwebtoken     | An implementation of JSON Web Tokens                 |
 | DOMPurify        | Sanitizer for HTML, MathML and SVG                   |
-| reactjs-popup    | React Popup Component - Modals,Tooltips and Menus    |
+| react-select     | Select Input control - multiselect, autocomplete     |
 
 ### Development Dependencies
 

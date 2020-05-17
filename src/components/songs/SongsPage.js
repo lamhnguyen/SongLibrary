@@ -11,6 +11,8 @@ import {
   changeSongPage,
   changeSongPageSize,
   resetSongFilter,
+  viewSong,
+  editSong,
   deleteSong,
 } from "../../actions/songActions";
 import { loadKeys } from "../../actions/keyActions";
@@ -35,6 +37,11 @@ function usePrevious(value) {
 
 export function SongsPage({
   songs,
+  keys,
+  genres,
+  authors,
+  poets,
+  artists,
   filter,
   isLoading,
   loadSongs,
@@ -51,18 +58,20 @@ export function SongsPage({
   changeSongPage,
   changeSongPageSize,
   resetSongFilter,
+  viewSong,
+  editSong,
   deleteSong,
 }) {
   const prevFilter = usePrevious(filter);
 
   // Page load
   useEffect(() => {
-    loadKeys();
-    loadGenres();
+    if (!keys) loadKeys();
+    if (!genres) loadGenres();
 
-    loadAuthors();
-    loadPoets();
-    loadArtists();
+    if (!authors) loadAuthors();
+    if (!poets) loadPoets();
+    if (!artists) loadArtists();
 
     loadSongs(filter);
   }, []);
@@ -124,6 +133,14 @@ export function SongsPage({
     resetSongFilter();
   }
 
+  async function handleViewSong(song) {
+    viewSong(song);
+  }
+
+  async function handleEditSong(song) {
+    editSong(song);
+  }
+
   async function handleDeleteSong(song) {
     const result = await confirm.show({
       message: `Are you sure of delete '${song.name}'?`,
@@ -163,6 +180,8 @@ export function SongsPage({
             onChangePoet={handleChangePoet}
             onChangeArtist={handleChangeArtist}
             onChangeSortOrder={handleChangeSortOrder}
+            onViewSong={handleViewSong}
+            onEditSong={handleEditSong}
             onDeleteSong={handleDeleteSong}
           />
         </div>
@@ -181,6 +200,11 @@ export function SongsPage({
 
 SongsPage.propTypes = {
   songs: PropTypes.array,
+  keys: PropTypes.array,
+  genres: PropTypes.array,
+  authors: PropTypes.array,
+  poets: PropTypes.array,
+  artists: PropTypes.array,
   filter: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
   loadSongs: PropTypes.func.isRequired,
@@ -197,21 +221,33 @@ SongsPage.propTypes = {
   changeSongSortOrder: PropTypes.func.isRequired,
   changeSongPageSize: PropTypes.func.isRequired,
   resetSongFilter: PropTypes.func.isRequired,
+  viewSong: PropTypes.func.isRequired,
+  editSong: PropTypes.func.isRequired,
   deleteSong: PropTypes.func.isRequired,
 };
 
+function isLoaded(state) {
+  return (
+    state.keys &&
+    state.genres &&
+    state.authors &&
+    state.poets &&
+    state.artists &&
+    state.songs
+  );
+}
+
 function mapStateToProps(state) {
-  const songs =
-    !state.keys ||
-    !state.genres ||
-    !state.authors ||
-    !state.poets ||
-    !state.artists ||
-    !state.songs
-      ? []
-      : state.songs.map((s) => expandSong(s, state));
+  const expandedSongs = isLoaded(state)
+    ? state.songs.map((s) => expandSong(s, state))
+    : [];
   return {
-    songs,
+    songs: expandedSongs,
+    keys: state.keys,
+    genres: state.genres,
+    authors: state.authors,
+    poets: state.poets,
+    artists: state.artists,
     filter: state.songFilter,
     isLoading: state.apiStatus.count > 0,
   };
@@ -232,6 +268,8 @@ const mapDispatchToProps = {
   changeSongPage,
   changeSongPageSize,
   resetSongFilter,
+  viewSong,
+  editSong,
   deleteSong,
 };
 

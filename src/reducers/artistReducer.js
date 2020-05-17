@@ -6,6 +6,7 @@ export default function artistReducer(state = initialState.artists, action) {
     case types.LOAD_ARTISTS_SUCCESS:
       return action.artists;
     case types.CREATE_ARTIST_SUCCESS:
+    case types.CREATE_SONG_ARTIST_SUCCESS:
       return [...state, { ...action.artist }];
     case types.UPDATE_ARTIST_SUCCESS:
       return state.map((artist) =>

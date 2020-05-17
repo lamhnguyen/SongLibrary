@@ -1,7 +1,10 @@
 import * as api from "../api/api";
 import * as types from "./actionTypes";
-import { apiCallBegin, apiCallError } from "./apiActions";
+import { asyncAction } from "./actionHelper";
 import * as songApi from "../api/songApi";
+import * as authorApi from "../api/authorApi";
+import * as poetApi from "../api/poetApi";
+import * as artistApi from "../api/artistApi";
 
 export function loadSongsSuccess(result) {
   return { type: types.LOAD_SONGS_SUCCESS, result };
@@ -59,66 +62,81 @@ export function resetSongFilter() {
   return { type: types.RESET_SONG_FILTER };
 }
 
+export function viewSong(song) {
+  return { type: types.VIEW_SONG, song };
+}
+
+export function editSong(song) {
+  return { type: types.EDIT_SONG, song };
+}
+
+export function createSongAuthorSucess(author) {
+  return { type: types.CREATE_SONG_AUTHOR_SUCCESS, author };
+}
+
+export function createSongPoetSucess(poet) {
+  return { type: types.CREATE_SONG_POET_SUCCESS, poet };
+}
+
+export function createSongArtistSucess(artist) {
+  return { type: types.CREATE_SONG_ARTIST_SUCCESS, artist };
+}
+
 // thunk action creator
 export function loadSongs(filter) {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.LOAD_SONGS));
-    return songApi
-      .getSongs(filter)
-      .then((result) => {
-        dispatch(loadSongsSuccess(result));
-      })
-      .catch((error) => {
-        const errMsg = "loadSongs failed - Error: " + error.message;
-        dispatch(apiCallError(api.LOAD_SONGS, errMsg));
-      });
-  };
+  return asyncAction(
+    api.LOAD_SONGS,
+    songApi.getSongs,
+    loadSongsSuccess,
+    filter
+  );
 }
 
 export function loadSong(slug) {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.LOAD_SONG));
-    return songApi
-      .getSong(slug)
-      .then((song) => {
-        dispatch(loadSongSuccess(song));
-      })
-      .catch((error) => {
-        const errMsg = "loadSong failed - Error: " + error.message;
-        dispatch(apiCallError(api.LOAD_SONG, errMsg));
-      });
-  };
+  return asyncAction(api.LOAD_SONG, songApi.getSong, loadSongSuccess, slug);
 }
 
 export function deleteSong(id) {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.DELETE_SONG));
-    return songApi
-      .deleteSong(id)
-      .then(() => {
-        dispatch(deleteSongSuccess(id));
-      })
-      .catch((error) => {
-        const errMsg = "deleteSong failed - Error: " + error.message;
-        dispatch(apiCallError(api.DELETE_SONG, errMsg));
-      });
-  };
+  return asyncAction(
+    api.DELETE_SONG,
+    songApi.deleteSong,
+    deleteSongSuccess,
+    id
+  );
 }
 
 export function saveSong(song) {
-  const saveApi = song.id ? api.UPDATE_SONG : api.CREATE_SONG;
-  return function (dispatch) {
-    dispatch(apiCallBegin(saveApi));
-    return songApi
-      .saveSong(song)
-      .then((savedSong) => {
-        dispatch(
-          song.id ? updateSongSuccess(savedSong) : createSongSuccess(savedSong)
-        );
-      })
-      .catch((error) => {
-        const errMsg = "saveSong failed - Error: " + error.message;
-        dispatch(apiCallError(saveApi, errMsg));
-      });
-  };
+  return asyncAction(
+    song.id ? api.UPDATE_SONG : api.CREATE_SONG,
+    songApi.saveSong,
+    song.id ? updateSongSuccess : createSongSuccess,
+    song
+  );
+}
+
+export function createSongAuthor(author) {
+  return asyncAction(
+    api.CREATE_AUTHOR,
+    authorApi.saveAuthor,
+    createSongAuthorSucess,
+    author
+  );
+}
+
+export function createSongPoet(poet) {
+  return asyncAction(
+    api.CREATE_POET,
+    poetApi.savePoet,
+    createSongPoetSucess,
+    poet
+  );
+}
+
+export function createSongArtist(artist) {
+  return asyncAction(
+    api.CREATE_ARTIST,
+    artistApi.saveArtist,
+    createSongArtistSucess,
+    artist
+  );
 }

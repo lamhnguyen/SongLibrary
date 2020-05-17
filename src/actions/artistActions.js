@@ -1,6 +1,6 @@
 import * as api from "../api/api";
 import * as types from "./actionTypes";
-import { apiCallBegin, apiCallError } from "./apiActions";
+import { asyncAction } from "./actionHelper";
 import * as artistApi from "../api/artistApi";
 
 export function loadArtistsSuccess(artists) {
@@ -21,51 +21,27 @@ export function deleteArtistSuccess(id) {
 
 // thunk action creator
 export function loadArtists() {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.LOAD_ARTISTS));
-    return artistApi
-      .getArtists()
-      .then((artists) => {
-        dispatch(loadArtistsSuccess(artists));
-      })
-      .catch((error) => {
-        const errMsg = "loadArtists failed - Error: " + error.message;
-        dispatch(apiCallError(api.LOAD_ARTISTS, errMsg));
-      });
-  };
+  return asyncAction(
+    api.LOAD_ARTISTS,
+    artistApi.getArtists,
+    loadArtistsSuccess
+  );
 }
 
 export function deleteArtist(id) {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.DELETE_ARTIST));
-    return artistApi
-      .deleteArtist(id)
-      .then(() => {
-        dispatch(deleteArtistSuccess(id));
-      })
-      .catch((error) => {
-        const errMsg = "deleteArtist failed - Error: " + error.message;
-        dispatch(apiCallError(api.DELETE_ARTIST, errMsg));
-      });
-  };
+  return asyncAction(
+    api.DELETE_ARTIST,
+    artistApi.deleteArtist,
+    deleteArtistSuccess,
+    id
+  );
 }
 
 export function saveArtist(artist) {
-  const saveApi = artist.id ? api.UPDATE_ARTIST : api.CREATE_ARTIST;
-  return function (dispatch) {
-    dispatch(apiCallBegin(saveApi));
-    return artistApi
-      .saveArtist(artist)
-      .then((savedArtist) => {
-        dispatch(
-          artist.id
-            ? updateArtistSuccess(savedArtist)
-            : createArtistSuccess(savedArtist)
-        );
-      })
-      .catch((error) => {
-        const errMsg = "saveArtist failed - Error: " + error.message;
-        dispatch(apiCallError(saveApi, errMsg));
-      });
-  };
+  return asyncAction(
+    artist.id ? api.UPDATE_ARTIST : api.CREATE_ARTIST,
+    artistApi.saveArtist,
+    artist.id ? updateArtistSuccess : createArtistSuccess,
+    artist
+  );
 }

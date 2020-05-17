@@ -11,6 +11,16 @@ export default function songReducer(state = initialState.song, action) {
       return action.song;
     case types.DELETE_SONG_SUCCESS:
       return null;
+    case types.VIEW_SONG:
+      return action.song;
+    case types.EDIT_SONG:
+      return action.song;
+    case types.CREATE_SONG_AUTHOR_SUCCESS:
+      return { ...state, authorIds: [...state.authorIds, action.author.id] };
+    case types.CREATE_SONG_POET_SUCCESS:
+      return { ...state, poetIds: [...state.poetIds, action.poet.id] };
+    case types.CREATE_SONG_ARTIST_SUCCESS:
+      return { ...state, artistIds: [...state.artistIds, action.artist.id] };
     default:
       return state;
   }

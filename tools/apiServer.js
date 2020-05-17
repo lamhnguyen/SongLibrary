@@ -82,28 +82,8 @@ server.get("/songs/:slug", function (req, res) {
   const db = router.db;
   let song = dbHelper.getBy(db, "songs", "slug", req.params.slug);
 
-  const { expanded } = queryString.parse(req._parsedUrl.query);
-
   if (song) {
-    if (expanded.toLowerCase() === "true") {
-      let expandedSong = {
-        id: song.id,
-        name: song.name,
-        slug: song.slug,
-        preview: song.preview,
-        lyrics: song.lyrics,
-        views: song.views,
-        likes: song.likes,
-      };
-
-      expandedSong.genre = dbHelper.getById(db, "genres", song.genreId);
-      expandedSong.key = dbHelper.getById(db, "keys", song.keyId);
-      expandedSong.authors = dbHelper.getByIds(db, "authors", song.authorIds);
-      expandedSong.poets = dbHelper.getByIds(db, "poets", song.poetIds);
-      expandedSong.artists = dbHelper.getByIds(db, "artists", song.artistIds);
-
-      res.jsonp(expandedSong);
-    } else res.jsonp(song);
+    res.jsonp(song);
   } else {
     res.sendStatus(404);
   }
@@ -263,7 +243,7 @@ function getSortOrder(order) {
 }
 
 function getExpandedSongs(db) {
-  const songs = db.get("songs").map(function (s) {
+  const songs = dbHelper.get(db, "songs").map((s) => {
     return {
       id: s.id,
       name: s.name,
@@ -386,7 +366,7 @@ function getSongs(db, filter) {
       totalCount: filteredSongs.length,
     },
     songs: pagedSongs.map((song) =>
-      db.get("songs").find((s) => s.id === song.id)
+      dbHelper.get(db, "songs").find((s) => s.id === song.id)
     ),
   };
 

@@ -1,6 +1,6 @@
 import * as api from "../api/api";
 import * as types from "./actionTypes";
-import { apiCallBegin, apiCallError } from "./apiActions";
+import { asyncAction } from "./actionHelper";
 import * as poetApi from "../api/poetApi";
 
 export function loadPoetsSuccess(poets) {
@@ -21,49 +21,23 @@ export function deletePoetSuccess(id) {
 
 // thunk action creator
 export function loadPoets() {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.LOAD_POETS));
-    return poetApi
-      .getPoets()
-      .then((poets) => {
-        dispatch(loadPoetsSuccess(poets));
-      })
-      .catch((error) => {
-        const errMsg = "loadPoets failed - Error: " + error.message;
-        dispatch(apiCallError(api.LOAD_POETS, errMsg));
-      });
-  };
+  return asyncAction(api.LOAD_POETS, poetApi.getPoets, loadPoetsSuccess);
 }
 
 export function deletePoet(id) {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.DELETE_POET));
-    return poetApi
-      .deletePoet(id)
-      .then(() => {
-        dispatch(deletePoetSuccess(id));
-      })
-      .catch((error) => {
-        const errMsg = "deletePoet failed - Error: " + error.message;
-        dispatch(apiCallError(api.DELETE_POET, errMsg));
-      });
-  };
+  return asyncAction(
+    api.DELETE_POET,
+    poetApi.deletePoet,
+    deletePoetSuccess,
+    id
+  );
 }
 
 export function savePoet(poet) {
-  const saveApi = poet.id ? api.UPDATE_POET : api.CREATE_POET;
-  return function (dispatch) {
-    dispatch(apiCallBegin(saveApi));
-    return poetApi
-      .savePoet(poet)
-      .then((savedPoet) => {
-        dispatch(
-          poet.id ? updatePoetSuccess(savedPoet) : createPoetSuccess(savedPoet)
-        );
-      })
-      .catch((error) => {
-        const errMsg = "savePoet failed - Error: " + error.message;
-        dispatch(apiCallError(saveApi, errMsg));
-      });
-  };
+  return asyncAction(
+    poet.id ? api.UPDATE_POET : api.CREATE_POET,
+    poetApi.savePoet,
+    poet.id ? updatePoetSuccess : createPoetSuccess,
+    poet
+  );
 }

@@ -1,6 +1,6 @@
 import * as api from "../api/api";
 import * as types from "./actionTypes";
-import { apiCallBegin, apiCallError } from "./apiActions";
+import { asyncAction } from "./actionHelper";
 import * as authorApi from "../api/authorApi";
 
 export function loadAuthorsSuccess(authors) {
@@ -21,51 +21,27 @@ export function deleteAuthorSuccess(id) {
 
 // thunk action creator
 export function loadAuthors() {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.LOAD_AUTHORS));
-    return authorApi
-      .getAuthors()
-      .then((authors) => {
-        dispatch(loadAuthorsSuccess(authors));
-      })
-      .catch((error) => {
-        const errMsg = "loadAuthors failed - Error: " + error.message;
-        dispatch(apiCallError(api.LOAD_AUTHORS, errMsg));
-      });
-  };
+  return asyncAction(
+    api.LOAD_AUTHORS,
+    authorApi.getAuthors,
+    loadAuthorsSuccess
+  );
 }
 
 export function deleteAuthor(id) {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.DELETE_AUTHOR));
-    return authorApi
-      .deleteAuthor(id)
-      .then(() => {
-        dispatch(deleteAuthorSuccess(id));
-      })
-      .catch((error) => {
-        const errMsg = "deleteAuthor failed - Error: " + error.message;
-        dispatch(apiCallError(api.DELETE_AUTHOR, errMsg));
-      });
-  };
+  return asyncAction(
+    api.DELETE_AUTHOR,
+    authorApi.deleteAuthor,
+    deleteAuthorSuccess,
+    id
+  );
 }
 
 export function saveAuthor(author) {
-  const saveApi = author.id ? api.UPDATE_AUTHOR : api.CREATE_AUTHOR;
-  return function (dispatch) {
-    dispatch(apiCallBegin(saveApi));
-    return authorApi
-      .saveAuthor(author)
-      .then((savedAuthor) => {
-        dispatch(
-          author.id
-            ? updateAuthorSuccess(savedAuthor)
-            : createAuthorSuccess(savedAuthor)
-        );
-      })
-      .catch((error) => {
-        const errMsg = "saveAuthor failed - Error: " + error.message;
-        dispatch(apiCallError(saveApi, errMsg));
-      });
-  };
+  return asyncAction(
+    author.id ? api.UPDATE_AUTHOR : api.CREATE_AUTHOR,
+    authorApi.saveAuthor,
+    author.id ? updateAuthorSuccess : createAuthorSuccess,
+    author
+  );
 }

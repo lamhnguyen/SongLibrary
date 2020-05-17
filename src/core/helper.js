@@ -134,3 +134,7 @@ export const createMarkup = (html) => {
 export const endsWith = (text, search) => {
   return _endsWith(text, search);
 };
+
+export const isEmpty = (obj) => {
+  return Object.keys(obj).length === 0;
+};

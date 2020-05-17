@@ -5,6 +5,10 @@ export const CREATE_SONG = "CREATE_SONG";
 export const UPDATE_SONG = "UPDATE_SONG";
 export const DELETE_SONG = "DELETE_SONG";
 
+export const CREATE_SONG_AUTHOR = "CREATE_SONG_AUTHOR";
+export const CREATE_SONG_POET = "CREATE_SONG_POET";
+export const CREATE_SONG_ARTIST = "CREATE_SONG_ARTIST";
+
 // Genre
 export const LOAD_GENRES = "LOAD_GENRES";
 export const CREATE_GENRE = "CREATE_GENRE";

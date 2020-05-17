@@ -1,6 +1,6 @@
 import * as api from "../api/api";
 import * as types from "./actionTypes";
-import { apiCallBegin, apiCallError } from "./apiActions";
+import { asyncAction } from "./actionHelper";
 import * as genreApi from "../api/genreApi";
 
 export function loadGenresSuccess(genres) {
@@ -21,51 +21,23 @@ export function deleteGenreSuccess(id) {
 
 // thunk action creator
 export function loadGenres() {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.LOAD_GENRES));
-    return genreApi
-      .getGenres()
-      .then((genres) => {
-        dispatch(loadGenresSuccess(genres));
-      })
-      .catch((error) => {
-        const errMsg = "loadGenres failed - Error: " + error.message;
-        dispatch(apiCallError(api.LOAD_GENRES, errMsg));
-      });
-  };
+  return asyncAction(api.LOAD_GENRES, genreApi.getGenres, loadGenresSuccess);
 }
 
 export function deleteGenre(id) {
-  return function (dispatch) {
-    dispatch(apiCallBegin(api.DELETE_GENRE));
-    return genreApi
-      .deleteGenre(id)
-      .then(() => {
-        dispatch(deleteGenreSuccess(id));
-      })
-      .catch((error) => {
-        const errMsg = "deleteGenre failed - Error: " + error.message;
-        dispatch(apiCallError(api.DELETE_GENRE, errMsg));
-      });
-  };
+  return asyncAction(
+    api.DELETE_GENRE,
+    genreApi.deleteGenre,
+    deleteGenreSuccess,
+    id
+  );
 }
 
 export function saveGenre(genre) {
-  const saveApi = genre.id ? api.UPDATE_GENRE : api.CREATE_GENRE;
-  return function (dispatch) {
-    dispatch(apiCallBegin(saveApi));
-    return genreApi
-      .saveGenre(genre)
-      .then((savedGenre) => {
-        dispatch(
-          genre.id
-            ? updateGenreSuccess(savedGenre)
-            : createGenreSuccess(savedGenre)
-        );
-      })
-      .catch((error) => {
-        const errMsg = "saveGenre failed - Error: " + error.message;
-        dispatch(apiCallError(saveApi, errMsg));
-      });
-  };
+  return asyncAction(
+    genre.id ? api.UPDATE_GENRE : api.CREATE_GENRE,
+    genreApi.saveGenre,
+    genre.id ? updateGenreSuccess : createGenreSuccess,
+    genre
+  );
 }

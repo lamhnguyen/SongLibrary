@@ -1,3 +1,7 @@
+function get(db, name) {
+  return db.get(name).value();
+}
+
 function getBy(db, name, key, value) {
   const chain = db.get(name);
 
@@ -46,4 +50,4 @@ function update(db, name, data) {
 }
 
 // Using CommonJS style export so we can consume via Node (without using Babel-node)
-module.exports = { getBy, getById, getByIds, getBySlug, insert, update };
+module.exports = { get, getBy, getById, getByIds, getBySlug, insert, update };

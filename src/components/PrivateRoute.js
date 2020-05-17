@@ -6,7 +6,7 @@ import AuthContext from "../security/AuthContext";
 function PrivateRoute({ component: Component, scopes, ...rest }) {
   return (
     <AuthContext.Consumer>
-      {(auth) => (
+      {({ auth }) => (
         <Route
           {...rest}
           render={(props) => {

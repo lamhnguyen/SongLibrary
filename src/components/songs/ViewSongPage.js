@@ -8,8 +8,15 @@ import {
   changeSongAuthor,
   changeSongPoet,
   changeSongArtist,
+  editSong,
   deleteSong,
 } from "../../actions/songActions";
+import { loadKeys } from "../../actions/keyActions";
+import { loadGenres } from "../../actions/genreActions";
+import { loadAuthors } from "../../actions/authorActions";
+import { loadPoets } from "../../actions/poetActions";
+import { loadArtists } from "../../actions/artistActions";
+import { expandSong } from "./helper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AuthContext from "../../security/AuthContext";
 import { createMarkup } from "../../core/helper";
@@ -27,18 +34,28 @@ let scrollTimer;
 let scrollTop;
 
 export function ViewSongPage({
+  song,
+  keys,
+  genres,
+  authors,
+  poets,
+  artists,
   isLoading,
   loadSong,
+  loadKeys,
+  loadGenres,
+  loadAuthors,
+  loadPoets,
+  loadArtists,
   changeSongAuthor,
   changeSongPoet,
   changeSongArtist,
+  editSong,
   deleteSong,
   history,
   ...props
 }) {
-  const auth = useContext(AuthContext);
-
-  let [song, setSong] = useState(props.song);
+  const { isAuthenticated, isAdmin } = useContext(AuthContext);
 
   let [fontSize, setFontSize] = useState(MIN_FONT_SIZE);
   let [key, setKey] = useState("");
@@ -46,16 +63,27 @@ export function ViewSongPage({
 
   // Page load
   useEffect(() => {
+    if (!keys) loadKeys();
+    if (!genres) loadGenres();
+
+    if (!authors) loadAuthors();
+    if (!poets) loadPoets();
+    if (!artists) loadArtists();
+
     if (!song) {
       const slug = props.match.params.slug;
-      loadSong(slug)
-        .then((s) => setSong(s))
-        .catch(history.push("/"));
+      loadSong(slug);
     }
-
-    setKey(song.key.name);
-    setLyrics(song.lyrics);
   }, []);
+
+  // Song loaded
+  useEffect(() => {
+    if (song) {
+      console.log("Song loaded");
+      setKey(song.key.name);
+      setLyrics(song.lyrics);
+    }
+  }, [song]);
 
   function changeFontSize() {
     if (fontSize >= MAX_FONT_SIZE) setFontSize(MIN_FONT_SIZE);
@@ -114,9 +142,11 @@ export function ViewSongPage({
     newWin.document.close();
   }
 
-  async function handleDelete(event, song) {
-    event.preventDefault();
+  function handleEditSong(song) {
+    editSong(song);
+  }
 
+  async function handleDeleteSong(song) {
     const result = await confirm.show({
       message: `Are you sure of delete '${song.name}'?`,
     });
@@ -137,25 +167,27 @@ export function ViewSongPage({
       <div className="container">
         <div>
           <span className="h3">{song.name}</span>
-          {auth.isAuthenticated() && auth.isAdmin() && (
+          {isAuthenticated && isAdmin && (
             <span className="align-text-bottom">
-              <a
+              <Link
+                to={`/song/${song.slug}`}
                 className="edit pl-2"
                 title="Edit"
                 data-toggle="tooltip"
                 style={{ cursor: "pointer" }}
+                onClick={() => handleEditSong(song)}
               >
                 <FontAwesomeIcon icon="edit" color="#5cb85c" />
-              </a>
-              <a
+              </Link>
+              <Link
                 className="delete pl-2"
                 title="Delete"
                 data-toggle="tooltip"
                 style={{ cursor: "pointer" }}
-                onClick={(e) => handleDelete(e, song)}
+                onClick={() => handleDeleteSong(song)}
               >
                 <FontAwesomeIcon icon="trash" color="#d9534f" />
-              </a>
+              </Link>
             </span>
           )}
         </div>
@@ -262,11 +294,22 @@ export function ViewSongPage({
 
 ViewSongPage.propTypes = {
   song: PropTypes.object,
+  keys: PropTypes.array,
+  genres: PropTypes.array,
+  authors: PropTypes.array,
+  poets: PropTypes.array,
+  artists: PropTypes.array,
   isLoading: PropTypes.bool.isRequired,
   loadSong: PropTypes.func.isRequired,
+  loadKeys: PropTypes.func.isRequired,
+  loadGenres: PropTypes.func.isRequired,
+  loadAuthors: PropTypes.func.isRequired,
+  loadPoets: PropTypes.func.isRequired,
+  loadArtists: PropTypes.func.isRequired,
   changeSongAuthor: PropTypes.func.isRequired,
   changeSongPoet: PropTypes.func.isRequired,
   changeSongArtist: PropTypes.func.isRequired,
+  editSong: PropTypes.func.isRequired,
   deleteSong: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   match: PropTypes.shape({
@@ -276,21 +319,45 @@ ViewSongPage.propTypes = {
   }),
 };
 
+function isLoaded(state) {
+  return (
+    state.keys && state.genres && state.authors && state.poets && state.artists
+  );
+}
+
 function mapStateToProps(state, ownProps) {
   const slug = ownProps.match.params.slug;
-  const song = state.songs ? state.songs.find((s) => s.slug === slug) : null;
+  const song =
+    state.song && state.song.slug === slug
+      ? state.song
+      : state.songs
+      ? state.songs.find((s) => s.slug === slug)
+      : null;
+
+  const expandedSong = isLoaded(state) && song ? expandSong(song, state) : null;
 
   return {
-    song: song,
+    song: expandedSong,
+    keys: state.keys,
+    genres: state.genres,
+    authors: state.authors,
+    poets: state.poets,
+    artists: state.artists,
     isLoading: state.apiStatus.count > 0,
   };
 }
 
 const mapDispatchToProps = {
   loadSong,
+  loadKeys,
+  loadGenres,
+  loadAuthors,
+  loadPoets,
+  loadArtists,
   changeSongAuthor,
   changeSongPoet,
   changeSongArtist,
+  editSong,
   deleteSong,
 };
 

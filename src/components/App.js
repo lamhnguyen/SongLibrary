@@ -16,7 +16,7 @@ import PageNotFound from "./PageNotFound";
 import AboutPage from "./about/AboutPage";
 import SongsPage from "./songs/SongsPage"; // eslint-disable-line import/no-named-as-default
 import ViewSongPage from "./songs/ViewSongPage"; // eslint-disable-line import/no-named-as-default
-import EditSongPage from "./songs/EditSongPage";
+import EditSongPage from "./songs/EditSongPage"; // eslint-disable-line import/no-named-as-default
 import ErrorBoundary from "./ErrorBoundary";
 
 export function App(props) {
@@ -25,8 +25,15 @@ export function App(props) {
   const { isUnauthorized } = props;
   if (isUnauthorized) auth.logout();
 
+  const authContextValue = {
+    auth,
+    isAuthenticated: auth.isAuthenticated(),
+    isAdmin: auth.isAdmin(),
+    name: auth.getName(),
+  };
+
   return (
-    <AuthContext.Provider value={auth}>
+    <AuthContext.Provider value={authContextValue}>
       <Header />
       <div className="container pt-3">
         <Alert />
