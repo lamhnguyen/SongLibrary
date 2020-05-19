@@ -80,7 +80,11 @@ const Pagination = ({
               "page-item" + (pager.selectedPage === 0 ? " disabled" : "")
             }
           >
-            <a className="page-link" onClick={(e) => handleClickPage(0, e)}>
+            <a
+              className="page-link"
+              onClick={(e) => handleClickPage(0, e)}
+              style={{ cursor: "pointer" }}
+            >
               First
             </a>
           </li>
@@ -94,6 +98,7 @@ const Pagination = ({
               onClick={(e) =>
                 handleClickPage((pager.selectedPage - 1) * pager.pageSize, e)
               }
+              style={{ cursor: "pointer" }}
             >
               Previous
             </a>
@@ -107,6 +112,7 @@ const Pagination = ({
                 <a
                   className="page-link"
                   onClick={(e) => handleClickPage(page.start, e)}
+                  style={{ cursor: "pointer" }}
                 >
                   {page.index + 1}
                 </a>
@@ -126,6 +132,7 @@ const Pagination = ({
               onClick={(e) =>
                 handleClickPage((pager.selectedPage + 1) * pager.pageSize, e)
               }
+              style={{ cursor: "pointer" }}
             >
               Next
             </a>

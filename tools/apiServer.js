@@ -89,15 +89,40 @@ server.get("/songs/:slug", function (req, res) {
   }
 });
 
-server.post("/songs/", function (req, res, next) {
-  const error = validateSong(req.body);
-  if (error) {
-    res.status(400).send(error);
-  } else {
-    req.body.slug = helper.slugify(req.body.name); // Generate a slug for new songs.
-    next();
-  }
-});
+server.put("/authors/:id", (req, res, next) =>
+  handleSave(req, res, next, validateAuthor, updateAuthor)
+);
+server.post("/authors/", (req, res, next) =>
+  handleSave(req, res, next, validateAuthor, updateAuthor)
+);
+
+server.put("/poets/:id", (req, res, next) =>
+  handleSave(req, res, next, validatePoet, updatePoet)
+);
+server.post("/poets/", (req, res, next) =>
+  handleSave(req, res, next, validatePoet, updatePoet)
+);
+
+server.put("/artists/:id", (req, res, next) =>
+  handleSave(req, res, next, validateArtist, updateArtist)
+);
+server.post("/artists/", (req, res, next) =>
+  handleSave(req, res, next, validateArtist, updateArtist)
+);
+
+server.put("/genres/:id", (req, res, next) =>
+  handleSave(req, res, next, validateGenre, updateGenre)
+);
+server.post("/genres/", (req, res, next) =>
+  handleSave(req, res, next, validateGenre, updateGenre)
+);
+
+server.put("/songs/:id", (req, res, next) =>
+  handleSave(req, res, next, validateSong, updateSong)
+);
+server.post("/songs/", (req, res, next) =>
+  handleSave(req, res, next, validateSong, updateSong)
+);
 
 server.post("/users/", function (req, res /*, next*/) {
   const db = router.db;
@@ -128,7 +153,72 @@ server.listen(port, () => {
   console.log(`JSON Server is running on port ${port}`);
 });
 
-// Constants
+// Helpers
+function handleSave(req, res, next, validate, update) {
+  let obj = req.body;
+  const error = validate(obj);
+  if (error) {
+    res.status(400).send(error);
+  } else {
+    if (update) obj = update(obj);
+
+    next();
+  }
+}
+
+// Validation
+function validateAuthor(author) {
+  if (!author.name) return "Name is required.";
+  return "";
+}
+
+function validatePoet(poet) {
+  if (!poet.name) return "Name is required.";
+  return "";
+}
+
+function validateArtist(artist) {
+  if (!artist.name) return "Name is required.";
+  return "";
+}
+
+function validateGenre(genre) {
+  if (!genre.name) return "Name is required.";
+  return "";
+}
+
+function validateSong(song) {
+  if (!song.name) return "Name is required.";
+  if (!song.keyId) return "Key is required";
+  if (!song.genreId) return "Genre is required";
+  if (song.authorIds.length === 0) return "Author is required";
+  if (song.lyrics === "") return "Lyrics is required";
+
+  return "";
+}
+
+// Update
+function updateSong(song) {
+  song.slug = helper.slugify(song.name);
+}
+
+function updateAuthor(author) {
+  author.slug = helper.slugify(author.name);
+}
+
+function updatePoet(poet) {
+  poet.slug = helper.slugify(poet.name);
+}
+
+function updateArtist(artist) {
+  artist.slug = helper.slugify(artist.name);
+}
+
+function updateGenre(genre) {
+  genre.slug = helper.slugify(genre.name);
+}
+
+// Song filter
 const VIEW_SIZE = 100;
 
 const VIEW_NEW = "new";
@@ -164,12 +254,6 @@ function generateToken(user) {
   });
 
   return token;
-}
-
-// Song
-function validateSong(song) {
-  if (!song.name) return "Name is required.";
-  return "";
 }
 
 const hasSongFilter = (req) => {

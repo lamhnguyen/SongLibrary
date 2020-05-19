@@ -17,6 +17,7 @@ import AboutPage from "./about/AboutPage";
 import SongsPage from "./songs/SongsPage"; // eslint-disable-line import/no-named-as-default
 import ViewSongPage from "./songs/ViewSongPage"; // eslint-disable-line import/no-named-as-default
 import EditSongPage from "./songs/EditSongPage"; // eslint-disable-line import/no-named-as-default
+import AuthorPage from "./author/AuthorPage"; // eslint-disable-line import/no-named-as-default
 import ErrorBoundary from "./ErrorBoundary";
 
 export function App(props) {
@@ -45,6 +46,7 @@ export function App(props) {
               render={(props) => <AuthCallback auth={auth} {...props} />}
             />
             <Route path="/about" component={AboutPage} />
+            <Route path="/author" component={AuthorPage} />
             <Route path="/song/:slug" component={EditSongPage} />
             <Route path="/song" component={EditSongPage} />
             <Route path="/:slug" component={ViewSongPage} />

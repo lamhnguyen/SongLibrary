@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { resetApp } from "../../global";
 import AuthContext from "../../security/AuthContext";
-import { changeSongSearch } from "../../actions/songActions";
+import { changeSongSearch, createSong } from "../../actions/songActions";
 import "./Header.css";
 
-export const Header = ({ search, changeSongSearch }) => {
+export const Header = ({ search, changeSongSearch, createSong }) => {
   const { auth, isAuthenticated, isAdmin, name } = useContext(AuthContext);
 
   const [searchKeyword, setSearchKeyword] = useState(search || "");
@@ -58,10 +58,18 @@ export const Header = ({ search, changeSongSearch }) => {
                   <FontAwesomeIcon icon="edit" />
                   <span className="px-1">Admin</span>
                 </a>
-                <div className="dropdown-menu m-0" aria-labelledby="menuUser">
-                  <a className="dropdown-item" rel="nofollow">
+                <div className="dropdown-menu m-0" aria-labelledby="menuAdmin">
+                  <Link
+                    to="/Song"
+                    className="dropdown-item"
+                    rel="nofollow"
+                    onClick={createSong}
+                  >
+                    Add Song
+                  </Link>
+                  <Link to="/Author" className="dropdown-item" rel="nofollow">
                     Manage Authors
-                  </a>
+                  </Link>
                   <a className="dropdown-item" rel="nofollow">
                     Manage Poets
                   </a>
@@ -138,6 +146,7 @@ export const Header = ({ search, changeSongSearch }) => {
 Header.propTypes = {
   search: PropTypes.string,
   changeSongSearch: PropTypes.func.isRequired,
+  createSong: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -148,6 +157,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
   changeSongSearch,
+  createSong,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

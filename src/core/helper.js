@@ -138,3 +138,11 @@ export const endsWith = (text, search) => {
 export const isEmpty = (obj) => {
   return Object.keys(obj).length === 0;
 };
+
+export const isJSON = (str) => {
+  try {
+    return JSON.parse(str) && !!str;
+  } catch (e) {
+    return false;
+  }
+};

@@ -8,6 +8,11 @@ export function loadKeysSuccess(keys) {
 }
 
 // thunk action creator
-export function loadKeys() {
-  return asyncAction(api.LOAD_KEYS, keyApi.getKeys, loadKeysSuccess);
+export function loadKeys(throwIfError = false) {
+  return asyncAction(
+    api.LOAD_KEYS,
+    keyApi.getKeys,
+    loadKeysSuccess,
+    throwIfError
+  );
 }

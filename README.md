@@ -39,6 +39,7 @@
 | jsonwebtoken     | An implementation of JSON Web Tokens                 |
 | DOMPurify        | Sanitizer for HTML, MathML and SVG                   |
 | react-select     | Select Input control - multiselect, autocomplete     |
+| react-table      | Data grid                                            |
 
 ### Development Dependencies
 

@@ -5,11 +5,10 @@ import { Link } from "react-router-dom";
 import Spinner from "../common/Spinner";
 import {
   loadSong,
+  deleteSong,
   changeSongAuthor,
   changeSongPoet,
   changeSongArtist,
-  editSong,
-  deleteSong,
 } from "../../actions/songActions";
 import { loadKeys } from "../../actions/keyActions";
 import { loadGenres } from "../../actions/genreActions";
@@ -50,7 +49,6 @@ export function ViewSongPage({
   changeSongAuthor,
   changeSongPoet,
   changeSongArtist,
-  editSong,
   deleteSong,
   history,
   ...props
@@ -70,16 +68,15 @@ export function ViewSongPage({
     if (!poets) loadPoets();
     if (!artists) loadArtists();
 
-    if (!song) {
-      const slug = props.match.params.slug;
-      loadSong(slug);
-    }
+    const slug = props.match.params.slug;
+    if (slug) {
+      if (!song || song.slug !== slug) loadSong(slug);
+    } else throw new Error("Slug is required");
   }, []);
 
   // Song loaded
   useEffect(() => {
     if (song) {
-      console.log("Song loaded");
       setKey(song.key.name);
       setLyrics(song.lyrics);
     }
@@ -142,9 +139,7 @@ export function ViewSongPage({
     newWin.document.close();
   }
 
-  function handleEditSong(song) {
-    editSong(song);
-  }
+  function handleEditSong(/*song*/) {}
 
   async function handleDeleteSong(song) {
     const result = await confirm.show({
@@ -155,7 +150,7 @@ export function ViewSongPage({
     }
   }
 
-  if (isLoading)
+  if (isLoading || !song)
     return (
       <div className="container">
         <Spinner />
@@ -163,132 +158,131 @@ export function ViewSongPage({
     );
 
   return (
-    song && (
-      <div className="container">
-        <div>
-          <span className="h3">{song.name}</span>
-          {isAuthenticated && isAdmin && (
-            <span className="align-text-bottom">
-              <Link
-                to={`/song/${song.slug}`}
-                className="edit pl-2"
-                title="Edit"
-                data-toggle="tooltip"
-                style={{ cursor: "pointer" }}
-                onClick={() => handleEditSong(song)}
-              >
-                <FontAwesomeIcon icon="edit" color="#5cb85c" />
-              </Link>
-              <Link
-                className="delete pl-2"
-                title="Delete"
-                data-toggle="tooltip"
-                style={{ cursor: "pointer" }}
-                onClick={() => handleDeleteSong(song)}
-              >
-                <FontAwesomeIcon icon="trash" color="#d9534f" />
-              </Link>
-            </span>
-          )}
-        </div>
-        <div className="py-1">
-          <span className="pr-2">Author:</span>
-          {song.authors.map((author, index) => {
-            return (
-              <Link
-                key={author.id}
-                to="/"
-                onClick={() => changeSongAuthor(author)}
-              >
-                {(index ? ", " : "") + author.name}
-              </Link>
-            );
-          })}
-          {song.poets.length > 0 ? (song.authors.length > 0 ? ", " : "") : ""}
-          {song.poets.map((poet, index) => {
-            return (
-              <React.Fragment key={poet.id}>
-                <Link to="/" onClick={() => changeSongPoet(poet)}>
-                  {(index ? ", " : "") + poet.name}
-                </Link>{" "}
-                (poet)
-              </React.Fragment>
-            );
-          })}
-          {song.genre && (
-            <>
-              <span className="px-2">| Genre:</span>
-              {song.genre.name}
-            </>
-          )}
-          <span className="px-2">| Artists:</span>
-          {song.artists.map((artist, index) => {
-            return (
-              <Link
-                key={artist.id}
-                to="/"
-                onClick={() => changeSongArtist(artist)}
-              >
-                {(index ? ", " : "") + artist.name}
-              </Link>
-            );
-          })}
-        </div>
-        <div id="toolbar" className="btn-toolbar mt-2">
-          <div className="btn-group mr-1">
-            <span
-              className="btn btn-outline-secondary btn-sm"
-              title="Transpose down"
-              onClick={() => changeKey(key, -1)}
+    <div>
+      <div>
+        <span className="h3">{song.name}</span>
+        {isAuthenticated && isAdmin && (
+          <span className="align-text-bottom">
+            <Link
+              to={`/song/${song.slug}`}
+              className="edit pl-2"
+              title="Edit"
+              data-toggle="tooltip"
+              style={{ cursor: "pointer" }}
+              onClick={() => handleEditSong(song)}
             >
-              b
-            </span>
-            <span
-              className="btn btn-outline-secondary btn-sm disabled"
-              title="Key"
+              <FontAwesomeIcon icon="edit" color="#5cb85c" />
+            </Link>
+            <Link
+              to=""
+              className="delete pl-2"
+              title="Delete"
+              data-toggle="tooltip"
+              style={{ cursor: "pointer" }}
+              onClick={() => handleDeleteSong(song)}
             >
-              <span className="chord">{key}</span>
-            </span>
-            <span
-              className="btn btn-outline-secondary btn-sm"
-              title="Transpose up"
-              onClick={() => changeKey(key, 1)}
-            >
-              #
-            </span>
-          </div>
-          <div className="btn-group mr-1">
-            <span
-              className="btn btn-outline-secondary btn-sm"
-              title="Auto scroll"
-              onClick={() => toggleScrolling()}
-            >
-              <FontAwesomeIcon icon="arrow-down" />
-            </span>
-            <span
-              className="btn btn-outline-secondary btn-sm"
-              title="Font size"
-              onClick={() => changeFontSize()}
-            >
-              <FontAwesomeIcon icon="font" />
-            </span>
-            <span
-              className="btn btn-outline-secondary btn-sm"
-              title="Print"
-              onClick={() => print(song)}
-            >
-              <FontAwesomeIcon icon="print" />
-            </span>
-          </div>
-        </div>
-        <div
-          id="lyrics"
-          className="mt-2"
-          style={{ fontSize: `${fontSize.toFixed(1)}rem` }}
-          dangerouslySetInnerHTML={createMarkup(formatLyrics(lyrics))}
-        ></div>
+              <FontAwesomeIcon icon="trash" color="#d9534f" />
+            </Link>
+          </span>
+        )}
       </div>
-    )
+      <div className="py-1">
+        <span className="pr-2">Author:</span>
+        {song.authors.map((author, index) => {
+          return (
+            <Link
+              key={author.id}
+              to="/"
+              onClick={() => changeSongAuthor(author)}
+            >
+              {(index ? ", " : "") + author.name}
+            </Link>
+          );
+        })}
+        {song.poets.length > 0 ? (song.authors.length > 0 ? ", " : "") : ""}
+        {song.poets.map((poet, index) => {
+          return (
+            <React.Fragment key={poet.id}>
+              <Link to="/" onClick={() => changeSongPoet(poet)}>
+                {(index ? ", " : "") + poet.name}
+              </Link>{" "}
+              (poet)
+            </React.Fragment>
+          );
+        })}
+        {song.genre && (
+          <>
+            <span className="px-2">| Genre:</span>
+            {song.genre.name}
+          </>
+        )}
+        <span className="px-2">| Artists:</span>
+        {song.artists.map((artist, index) => {
+          return (
+            <Link
+              key={artist.id}
+              to="/"
+              onClick={() => changeSongArtist(artist)}
+            >
+              {(index ? ", " : "") + artist.name}
+            </Link>
+          );
+        })}
+      </div>
+      <div id="toolbar" className="btn-toolbar mt-2">
+        <div className="btn-group mr-1">
+          <span
+            className="btn btn-outline-secondary btn-sm"
+            title="Transpose down"
+            onClick={() => changeKey(key, -1)}
+          >
+            b
+          </span>
+          <span
+            className="btn btn-outline-secondary btn-sm disabled"
+            title="Key"
+          >
+            <span className="chord">{key}</span>
+          </span>
+          <span
+            className="btn btn-outline-secondary btn-sm"
+            title="Transpose up"
+            onClick={() => changeKey(key, 1)}
+          >
+            #
+          </span>
+        </div>
+        <div className="btn-group mr-1">
+          <span
+            className="btn btn-outline-secondary btn-sm"
+            title="Auto scroll"
+            onClick={() => toggleScrolling()}
+          >
+            <FontAwesomeIcon icon="arrow-down" />
+          </span>
+          <span
+            className="btn btn-outline-secondary btn-sm"
+            title="Font size"
+            onClick={() => changeFontSize()}
+          >
+            <FontAwesomeIcon icon="font" />
+          </span>
+          <span
+            className="btn btn-outline-secondary btn-sm"
+            title="Print"
+            onClick={() => print(song)}
+          >
+            <FontAwesomeIcon icon="print" />
+          </span>
+        </div>
+      </div>
+      <div
+        id="lyrics"
+        className="mt-2"
+        style={{ fontSize: `${fontSize.toFixed(1)}rem` }}
+        dangerouslySetInnerHTML={createMarkup(formatLyrics(lyrics))}
+      ></div>
+    </div>
   );
 }
 
@@ -309,7 +303,6 @@ ViewSongPage.propTypes = {
   changeSongAuthor: PropTypes.func.isRequired,
   changeSongPoet: PropTypes.func.isRequired,
   changeSongArtist: PropTypes.func.isRequired,
-  editSong: PropTypes.func.isRequired,
   deleteSong: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   match: PropTypes.shape({
@@ -319,22 +312,16 @@ ViewSongPage.propTypes = {
   }),
 };
 
-function isLoaded(state) {
-  return (
-    state.keys && state.genres && state.authors && state.poets && state.artists
-  );
-}
+function mapStateToProps(state) {
+  const isLoading =
+    !state.keys ||
+    !state.genres ||
+    !state.authors ||
+    !state.poets ||
+    !state.artists ||
+    !state.song;
 
-function mapStateToProps(state, ownProps) {
-  const slug = ownProps.match.params.slug;
-  const song =
-    state.song && state.song.slug === slug
-      ? state.song
-      : state.songs
-      ? state.songs.find((s) => s.slug === slug)
-      : null;
-
-  const expandedSong = isLoaded(state) && song ? expandSong(song, state) : null;
+  const expandedSong = !isLoading ? expandSong(state.song, state) : null;
 
   return {
     song: expandedSong,
@@ -343,7 +330,7 @@ function mapStateToProps(state, ownProps) {
     authors: state.authors,
     poets: state.poets,
     artists: state.artists,
-    isLoading: state.apiStatus.count > 0,
+    isLoading,
   };
 }
 
@@ -357,7 +344,6 @@ const mapDispatchToProps = {
   changeSongAuthor,
   changeSongPoet,
   changeSongArtist,
-  editSong,
   deleteSong,
 };
 

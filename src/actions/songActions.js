@@ -70,6 +70,10 @@ export function editSong(song) {
   return { type: types.EDIT_SONG, song };
 }
 
+export function createSong() {
+  return { type: types.CREATE_SONG };
+}
+
 export function createSongAuthorSucess(author) {
   return { type: types.CREATE_SONG_AUTHOR_SUCCESS, author };
 }
@@ -83,60 +87,72 @@ export function createSongArtistSucess(artist) {
 }
 
 // thunk action creator
-export function loadSongs(filter) {
+export function loadSongs(filter, throwIfError = false) {
   return asyncAction(
     api.LOAD_SONGS,
     songApi.getSongs,
     loadSongsSuccess,
+    throwIfError,
     filter
   );
 }
 
-export function loadSong(slug) {
-  return asyncAction(api.LOAD_SONG, songApi.getSong, loadSongSuccess, slug);
+export function loadSong(slug, throwIfError = false) {
+  return asyncAction(
+    api.LOAD_SONG,
+    songApi.getSong,
+    loadSongSuccess,
+    throwIfError,
+    slug
+  );
 }
 
-export function deleteSong(id) {
+export function deleteSong(id, throwIfError = false) {
   return asyncAction(
     api.DELETE_SONG,
     songApi.deleteSong,
     deleteSongSuccess,
+    throwIfError,
     id
   );
 }
 
-export function saveSong(song) {
+export function saveSong(song, throwIfError = false) {
   return asyncAction(
     song.id ? api.UPDATE_SONG : api.CREATE_SONG,
     songApi.saveSong,
     song.id ? updateSongSuccess : createSongSuccess,
+    throwIfError,
     song
   );
 }
 
-export function createSongAuthor(author) {
+export function createSongAuthor(author, throwIfError = false) {
   return asyncAction(
     api.CREATE_AUTHOR,
     authorApi.saveAuthor,
     createSongAuthorSucess,
+    throwIfError,
     author
   );
 }
 
-export function createSongPoet(poet) {
+export function createSongPoet(poet, throwIfError = false) {
   return asyncAction(
     api.CREATE_POET,
     poetApi.savePoet,
     createSongPoetSucess,
+    throwIfError,
     poet
   );
 }
 
-export function createSongArtist(artist) {
+export function createSongArtist(artist, throwIfError = false) {
   return asyncAction(
     api.CREATE_ARTIST,
     artistApi.saveArtist,
     createSongArtistSucess,
+    throwIfError,
     artist
   );
 }

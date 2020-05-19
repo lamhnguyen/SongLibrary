@@ -48,3 +48,4 @@
     - React Hooks cheat sheet: Unlock solutions to common problems - Ohans Emmanuel (https://blog.logrocket.com/react-hooks-cheat-sheet-unlock-solutions-to-common-problems-af4caf699e70/)
     - Building forms using React — everything you need to know - Manjunath (https://www.codementor.io/@blizzerand/building-forms-using-react-everything-you-need-to-know-iz3eyoq4y)
     - Clean Code vs. Dirty Code: React Best Practices - Donavon West (https://americanexpress.io/clean-code-dirty-code/)
+    - Best Practices for Rest Api design - John Au-Yeung (https://stackoverflow.blog/2020/03/02/best-practices-for-rest-api-design/)

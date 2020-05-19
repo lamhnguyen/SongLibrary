@@ -20,28 +20,31 @@ export function deleteAuthorSuccess(id) {
 }
 
 // thunk action creator
-export function loadAuthors() {
+export function loadAuthors(throwIfError = false) {
   return asyncAction(
     api.LOAD_AUTHORS,
     authorApi.getAuthors,
-    loadAuthorsSuccess
+    loadAuthorsSuccess,
+    throwIfError
   );
 }
 
-export function deleteAuthor(id) {
+export function deleteAuthor(id, throwIfError = false) {
   return asyncAction(
     api.DELETE_AUTHOR,
     authorApi.deleteAuthor,
     deleteAuthorSuccess,
+    throwIfError,
     id
   );
 }
 
-export function saveAuthor(author) {
+export function saveAuthor(author, throwIfError = false) {
   return asyncAction(
     author.id ? api.UPDATE_AUTHOR : api.CREATE_AUTHOR,
     authorApi.saveAuthor,
     author.id ? updateAuthorSuccess : createAuthorSuccess,
+    throwIfError,
     author
   );
 }

@@ -20,28 +20,31 @@ export function deleteArtistSuccess(id) {
 }
 
 // thunk action creator
-export function loadArtists() {
+export function loadArtists(throwIfError = false) {
   return asyncAction(
     api.LOAD_ARTISTS,
     artistApi.getArtists,
-    loadArtistsSuccess
+    loadArtistsSuccess,
+    throwIfError
   );
 }
 
-export function deleteArtist(id) {
+export function deleteArtist(id, throwIfError = false) {
   return asyncAction(
     api.DELETE_ARTIST,
     artistApi.deleteArtist,
     deleteArtistSuccess,
+    throwIfError,
     id
   );
 }
 
-export function saveArtist(artist) {
+export function saveArtist(artist, throwIfError = false) {
   return asyncAction(
     artist.id ? api.UPDATE_ARTIST : api.CREATE_ARTIST,
     artistApi.saveArtist,
     artist.id ? updateArtistSuccess : createArtistSuccess,
+    throwIfError,
     artist
   );
 }

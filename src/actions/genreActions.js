@@ -20,24 +20,31 @@ export function deleteGenreSuccess(id) {
 }
 
 // thunk action creator
-export function loadGenres() {
-  return asyncAction(api.LOAD_GENRES, genreApi.getGenres, loadGenresSuccess);
+export function loadGenres(throwIfError = false) {
+  return asyncAction(
+    api.LOAD_GENRES,
+    genreApi.getGenres,
+    loadGenresSuccess,
+    throwIfError
+  );
 }
 
-export function deleteGenre(id) {
+export function deleteGenre(id, throwIfError = false) {
   return asyncAction(
     api.DELETE_GENRE,
     genreApi.deleteGenre,
     deleteGenreSuccess,
+    throwIfError,
     id
   );
 }
 
-export function saveGenre(genre) {
+export function saveGenre(genre, throwIfError = false) {
   return asyncAction(
     genre.id ? api.UPDATE_GENRE : api.CREATE_GENRE,
     genreApi.saveGenre,
     genre.id ? updateGenreSuccess : createGenreSuccess,
+    throwIfError,
     genre
   );
 }
