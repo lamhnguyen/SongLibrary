@@ -13,7 +13,8 @@ export function asyncAction(
     dispatch(apiCallBegin(apiName));
     return apiFunc(...args)
       .then((result) => {
-        if (isEmpty(result)) dispatch(successAction(...args));
+        if (!Array.isArray(result) && isEmpty(result))
+          dispatch(successAction(...args));
         else dispatch(successAction(result, ...args));
       })
       .catch((error) => {

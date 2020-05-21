@@ -3,11 +3,9 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 export default function EditableCell({
+  isEditing,
   value: initialValue,
-  row: { index },
-  column: { id },
   onChange,
-  editable,
 }) {
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
@@ -18,7 +16,7 @@ export default function EditableCell({
 
   // We'll only update the external data when the input is blurred
   const handleBlur = () => {
-    onChange(index, id, value);
+    onChange(value);
   };
 
   // If the initialValue is changed externall, sync it up with our state
@@ -26,7 +24,7 @@ export default function EditableCell({
     setValue(initialValue);
   }, [initialValue]);
 
-  if (!editable) {
+  if (!isEditing) {
     return `${initialValue}`;
   }
 
@@ -35,8 +33,6 @@ export default function EditableCell({
 
 EditableCell.propTypes = {
   value: PropTypes.string,
-  row: PropTypes.number.isRequired,
-  column: PropTypes.number.isRequired,
-  updateData: PropTypes.func.isRequired,
-  editable: PropTypes.bool.isRequired,
+  onChange: PropTypes.func.isRequired,
+  isEditing: PropTypes.bool.isRequired,
 };
