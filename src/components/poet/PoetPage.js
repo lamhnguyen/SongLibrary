@@ -6,11 +6,7 @@ import Table from "../common/Table";
 import EditableCell from "../common/EditableCell";
 import ActionsCell from "../common/ActionsCell";
 import Spinner from "../common/Spinner";
-import {
-  loadAuthors,
-  saveAuthor,
-  deleteAuthor,
-} from "../../actions/authorActions";
+import { loadPoets, savePoet, deletePoet } from "../../actions/poetActions";
 import { showInfo, showError, dismissInfo } from "../../actions/alertActions";
 import { getErrorMessage } from "../../api/apiHelper";
 import { isEmpty } from "../../core/helper";
@@ -31,17 +27,17 @@ import confirm from "../confirm";
 
 const FILTER_COLUMN = "name";
 
-const NewAuthor = {
+const NewPoet = {
   id: null,
   name: "",
   slug: "",
 };
 
-export function AuthorPage({
+export function PoetPage({
   isLoading,
-  loadAuthors,
-  saveAuthor,
-  deleteAuthor,
+  loadPoets,
+  savePoet,
+  deletePoet,
   showInfo,
   showError,
   dismissInfo,
@@ -49,32 +45,32 @@ export function AuthorPage({
 }) {
   const [skipPageReset, setSkipPageReset] = useState(false);
   const [filter, setFilter] = useState({ id: FILTER_COLUMN, value: "" });
-  const [authors, setAuthors] = useState(null);
+  const [poets, setPoets] = useState(null);
   const [errors, setErrors] = useState({});
-  const [newAuthor, setNewAuthor] = useState(null);
+  const [newPoet, setNewPoet] = useState(null);
   const [isDebug] = useState(false);
 
   // Page load
   useEffect(() => {
-    setNewAuthor(createNewEditable(NewAuthor));
+    setNewPoet(createNewEditable(NewPoet));
 
-    if (!props.authors) loadAuthors();
+    if (!props.poets) loadPoets();
   }, []);
 
-  // Authors changed
+  // Poets changed
   useEffect(() => {
-    if (!authors && props.authors) {
-      setAuthors(props.authors.map((a) => itemToEditable(a)));
+    if (!poets && props.poets) {
+      setPoets(props.poets.map((a) => itemToEditable(a)));
     }
-  }, [props.authors]);
+  }, [props.poets]);
 
   // After data changes, we turn the flag back off so that if data actually changes when we're not  editing it, the page is reset
   useEffect(() => {
     setSkipPageReset(false);
-  }, [authors]);
+  }, [poets]);
 
-  function isValid(author) {
-    const { name } = author;
+  function isValid(poet) {
+    const { name } = poet;
 
     const errors = {};
 
@@ -86,48 +82,48 @@ export function AuthorPage({
     return isEmpty(errors);
   }
 
-  const addAuthor = (author) => {
-    authors.push(author);
+  const addPoet = (poet) => {
+    poets.push(poet);
   };
 
-  const updateAuthor = (author) => {
-    if (isNewEditable(author)) {
-      setNewAuthor(author);
-    } else setAuthors(authors.map((a) => (a.id === author.id ? author : a)));
+  const updatePoet = (poet) => {
+    if (isNewEditable(poet)) {
+      setNewPoet(poet);
+    } else setPoets(poets.map((a) => (a.id === poet.id ? poet : a)));
   };
 
-  const removeAuthor = (author) => {
-    setAuthors(authors.filter((a) => a.id !== author.id));
+  const removePoet = (poet) => {
+    setPoets(poets.filter((a) => a.id !== poet.id));
   };
 
-  const handleChange = (author, name, value) => {
+  const handleChange = (poet, name, value) => {
     // We also turn on the flag to not reset the page
     setSkipPageReset(true);
 
-    updateAuthor({ ...author, [name]: value });
+    updatePoet({ ...poet, [name]: value });
   };
 
-  const handleEdit = (author) => {
-    updateAuthor({ ...author, isEditing: true });
+  const handleEdit = (poet) => {
+    updatePoet({ ...poet, isEditing: true });
   };
 
-  const handleCancel = (author) => {
-    if (isNewEditable(author)) setNewAuthor(resetNewEditable(newAuthor));
+  const handleCancel = (poet) => {
+    if (isNewEditable(poet)) setNewPoet(resetNewEditable(newPoet));
     else {
       setSkipPageReset(true);
-      updateAuthor(resetEditable(author));
+      updatePoet(resetEditable(poet));
     }
   };
 
-  const handleSave = (author) => {
-    if (!isValid(author)) return;
+  const handleSave = (poet) => {
+    if (!isValid(poet)) return;
 
-    saveAuthor(editableToItem(author), true)
-      .then((savedAuthor) => {
-        if (author.id) updateAuthor(itemToEditable(savedAuthor));
+    savePoet(editableToItem(poet), true)
+      .then((savedPoet) => {
+        if (poet.id) updatePoet(itemToEditable(savedPoet));
         else {
-          addAuthor(itemToEditable(savedAuthor));
-          setNewAuthor(createNewEditable());
+          addPoet(itemToEditable(savedPoet));
+          setNewPoet(createNewEditable());
         }
 
         showInfo("Data has been saved successfully");
@@ -140,7 +136,7 @@ export function AuthorPage({
       });
   };
 
-  const handleDelete = async (author) => {
+  const handleDelete = async (poet) => {
     const result = await confirm.show({
       message: `Are you sure to delete?`,
     });
@@ -148,9 +144,9 @@ export function AuthorPage({
       return;
     }
 
-    deleteAuthor(author.id, true)
+    deletePoet(poet.id, true)
       .then(() => {
-        removeAuthor(author);
+        removePoet(poet);
 
         showInfo("Data has been deleted successfully");
         setTimeout(() => {
@@ -172,7 +168,7 @@ export function AuthorPage({
       ),
       Footer: (props) => (
         <EditableCell
-          {...getNewEditableCellProps(props, newAuthor, handleChange)}
+          {...getNewEditableCellProps(props, newPoet, handleChange)}
         />
       ),
     },
@@ -200,7 +196,7 @@ export function AuthorPage({
       Footer: () => (
         <ActionsCell
           {...getNewActionsCellProps(
-            newAuthor,
+            newPoet,
             handleEdit,
             handleSave,
             handleCancel,
@@ -216,7 +212,7 @@ export function AuthorPage({
     setFilter({ id: FILTER_COLUMN, value });
   };
 
-  if (isLoading || !authors)
+  if (isLoading || !poets)
     return (
       <div className="container">
         <Spinner />
@@ -244,7 +240,7 @@ export function AuthorPage({
               <input
                 value={filter.value}
                 onChange={handleFilterChange}
-                placeholder={"Author Name"}
+                placeholder={"Poet Name"}
                 className="form-control"
                 id="inputFilter"
               />
@@ -255,24 +251,22 @@ export function AuthorPage({
       <div className="">
         <Table
           columns={columns}
-          data={authors}
+          data={poets}
           dataFilters={[filter]}
           skipPageReset={skipPageReset}
         />
       </div>
-      <div>
-        {isDebug ? <Debugger newAuthor={newAuthor} authors={authors} /> : ""}
-      </div>
+      <div>{isDebug ? <Debugger newPoet={newPoet} poets={poets} /> : ""}</div>
     </div>
   );
 }
 
-AuthorPage.propTypes = {
-  authors: PropTypes.array,
+PoetPage.propTypes = {
+  poets: PropTypes.array,
   isLoading: PropTypes.bool.isRequired,
-  loadAuthors: PropTypes.func.isRequired,
-  saveAuthor: PropTypes.func.isRequired,
-  deleteAuthor: PropTypes.func.isRequired,
+  loadPoets: PropTypes.func.isRequired,
+  savePoet: PropTypes.func.isRequired,
+  deletePoet: PropTypes.func.isRequired,
   showInfo: PropTypes.func.isRequired,
   showError: PropTypes.func.isRequired,
   dismissInfo: PropTypes.func.isRequired,
@@ -280,18 +274,18 @@ AuthorPage.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    authors: state.authors,
+    poets: state.poets,
     isLoading: state.apiStatus.count > 0,
   };
 }
 
 const mapDispatchToProps = {
-  loadAuthors,
-  saveAuthor,
-  deleteAuthor,
+  loadPoets,
+  savePoet,
+  deletePoet,
   showInfo,
   showError,
   dismissInfo,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AuthorPage);
+export default connect(mapStateToProps, mapDispatchToProps)(PoetPage);

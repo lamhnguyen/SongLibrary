@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-key */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   useTable,
@@ -10,8 +10,11 @@ import {
 } from "react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Table.css";
+import Debugger from "./Debugger";
 
 export default function Table({ columns, data, dataFilters, skipPageReset }) {
+  const [isDebug] = useState(false);
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -195,26 +198,23 @@ export default function Table({ columns, data, dataFilters, skipPageReset }) {
           </ul>
         </div>
       </div>
-      {/* Debugging */}
       <div>
-        <pre>
-          <code>
-            {JSON.stringify(
-              {
-                pageIndex,
-                pageSize,
-                pageCount,
-                canNextPage,
-                canPreviousPage,
-                sortBy,
-                filters,
-                selectedRowIds: selectedRowIds,
-              },
-              null,
-              2
-            )}
-          </code>
-        </pre>
+        {isDebug ? (
+          <Debugger
+            table={{
+              pageIndex,
+              pageSize,
+              pageCount,
+              canNextPage,
+              canPreviousPage,
+              sortBy,
+              filters,
+              selectedRowIds: selectedRowIds,
+            }}
+          />
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

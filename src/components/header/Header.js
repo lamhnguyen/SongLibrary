@@ -70,12 +70,12 @@ export const Header = ({ search, changeSongSearch, createSong }) => {
                   <Link to="/Author" className="dropdown-item" rel="nofollow">
                     Manage Authors
                   </Link>
-                  <a className="dropdown-item" rel="nofollow">
+                  <Link to="/Poet" className="dropdown-item" rel="nofollow">
                     Manage Poets
-                  </a>
-                  <a className="dropdown-item" rel="nofollow">
+                  </Link>
+                  <Link to="/Artist" className="dropdown-item" rel="nofollow">
                     Manage Artists
-                  </a>
+                  </Link>
                 </div>
               </li>
             )}

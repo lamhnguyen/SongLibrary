@@ -7,10 +7,10 @@ import EditableCell from "../common/EditableCell";
 import ActionsCell from "../common/ActionsCell";
 import Spinner from "../common/Spinner";
 import {
-  loadAuthors,
-  saveAuthor,
-  deleteAuthor,
-} from "../../actions/authorActions";
+  loadArtists,
+  saveArtist,
+  deleteArtist,
+} from "../../actions/artistActions";
 import { showInfo, showError, dismissInfo } from "../../actions/alertActions";
 import { getErrorMessage } from "../../api/apiHelper";
 import { isEmpty } from "../../core/helper";
@@ -31,17 +31,17 @@ import confirm from "../confirm";
 
 const FILTER_COLUMN = "name";
 
-const NewAuthor = {
+const NewArtist = {
   id: null,
   name: "",
   slug: "",
 };
 
-export function AuthorPage({
+export function ArtistPage({
   isLoading,
-  loadAuthors,
-  saveAuthor,
-  deleteAuthor,
+  loadArtists,
+  saveArtist,
+  deleteArtist,
   showInfo,
   showError,
   dismissInfo,
@@ -49,32 +49,32 @@ export function AuthorPage({
 }) {
   const [skipPageReset, setSkipPageReset] = useState(false);
   const [filter, setFilter] = useState({ id: FILTER_COLUMN, value: "" });
-  const [authors, setAuthors] = useState(null);
+  const [artists, setArtists] = useState(null);
   const [errors, setErrors] = useState({});
-  const [newAuthor, setNewAuthor] = useState(null);
+  const [newArtist, setNewArtist] = useState(null);
   const [isDebug] = useState(false);
 
   // Page load
   useEffect(() => {
-    setNewAuthor(createNewEditable(NewAuthor));
+    setNewArtist(createNewEditable(NewArtist));
 
-    if (!props.authors) loadAuthors();
+    if (!props.artists) loadArtists();
   }, []);
 
-  // Authors changed
+  // Artists changed
   useEffect(() => {
-    if (!authors && props.authors) {
-      setAuthors(props.authors.map((a) => itemToEditable(a)));
+    if (!artists && props.artists) {
+      setArtists(props.artists.map((a) => itemToEditable(a)));
     }
-  }, [props.authors]);
+  }, [props.artists]);
 
   // After data changes, we turn the flag back off so that if data actually changes when we're not  editing it, the page is reset
   useEffect(() => {
     setSkipPageReset(false);
-  }, [authors]);
+  }, [artists]);
 
-  function isValid(author) {
-    const { name } = author;
+  function isValid(artist) {
+    const { name } = artist;
 
     const errors = {};
 
@@ -86,48 +86,48 @@ export function AuthorPage({
     return isEmpty(errors);
   }
 
-  const addAuthor = (author) => {
-    authors.push(author);
+  const addArtist = (artist) => {
+    artists.push(artist);
   };
 
-  const updateAuthor = (author) => {
-    if (isNewEditable(author)) {
-      setNewAuthor(author);
-    } else setAuthors(authors.map((a) => (a.id === author.id ? author : a)));
+  const updateArtist = (artist) => {
+    if (isNewEditable(artist)) {
+      setNewArtist(artist);
+    } else setArtists(artists.map((a) => (a.id === artist.id ? artist : a)));
   };
 
-  const removeAuthor = (author) => {
-    setAuthors(authors.filter((a) => a.id !== author.id));
+  const removeArtist = (artist) => {
+    setArtists(artists.filter((a) => a.id !== artist.id));
   };
 
-  const handleChange = (author, name, value) => {
+  const handleChange = (artist, name, value) => {
     // We also turn on the flag to not reset the page
     setSkipPageReset(true);
 
-    updateAuthor({ ...author, [name]: value });
+    updateArtist({ ...artist, [name]: value });
   };
 
-  const handleEdit = (author) => {
-    updateAuthor({ ...author, isEditing: true });
+  const handleEdit = (artist) => {
+    updateArtist({ ...artist, isEditing: true });
   };
 
-  const handleCancel = (author) => {
-    if (isNewEditable(author)) setNewAuthor(resetNewEditable(newAuthor));
+  const handleCancel = (artist) => {
+    if (isNewEditable(artist)) setNewArtist(resetNewEditable(newArtist));
     else {
       setSkipPageReset(true);
-      updateAuthor(resetEditable(author));
+      updateArtist(resetEditable(artist));
     }
   };
 
-  const handleSave = (author) => {
-    if (!isValid(author)) return;
+  const handleSave = (artist) => {
+    if (!isValid(artist)) return;
 
-    saveAuthor(editableToItem(author), true)
-      .then((savedAuthor) => {
-        if (author.id) updateAuthor(itemToEditable(savedAuthor));
+    saveArtist(editableToItem(artist), true)
+      .then((savedArtist) => {
+        if (artist.id) updateArtist(itemToEditable(savedArtist));
         else {
-          addAuthor(itemToEditable(savedAuthor));
-          setNewAuthor(createNewEditable());
+          addArtist(itemToEditable(savedArtist));
+          setNewArtist(createNewEditable());
         }
 
         showInfo("Data has been saved successfully");
@@ -140,7 +140,7 @@ export function AuthorPage({
       });
   };
 
-  const handleDelete = async (author) => {
+  const handleDelete = async (artist) => {
     const result = await confirm.show({
       message: `Are you sure to delete?`,
     });
@@ -148,9 +148,9 @@ export function AuthorPage({
       return;
     }
 
-    deleteAuthor(author.id, true)
+    deleteArtist(artist.id, true)
       .then(() => {
-        removeAuthor(author);
+        removeArtist(artist);
 
         showInfo("Data has been deleted successfully");
         setTimeout(() => {
@@ -172,7 +172,7 @@ export function AuthorPage({
       ),
       Footer: (props) => (
         <EditableCell
-          {...getNewEditableCellProps(props, newAuthor, handleChange)}
+          {...getNewEditableCellProps(props, newArtist, handleChange)}
         />
       ),
     },
@@ -200,7 +200,7 @@ export function AuthorPage({
       Footer: () => (
         <ActionsCell
           {...getNewActionsCellProps(
-            newAuthor,
+            newArtist,
             handleEdit,
             handleSave,
             handleCancel,
@@ -216,7 +216,7 @@ export function AuthorPage({
     setFilter({ id: FILTER_COLUMN, value });
   };
 
-  if (isLoading || !authors)
+  if (isLoading || !artists)
     return (
       <div className="container">
         <Spinner />
@@ -244,7 +244,7 @@ export function AuthorPage({
               <input
                 value={filter.value}
                 onChange={handleFilterChange}
-                placeholder={"Author Name"}
+                placeholder={"Artist Name"}
                 className="form-control"
                 id="inputFilter"
               />
@@ -255,24 +255,24 @@ export function AuthorPage({
       <div className="">
         <Table
           columns={columns}
-          data={authors}
+          data={artists}
           dataFilters={[filter]}
           skipPageReset={skipPageReset}
         />
       </div>
       <div>
-        {isDebug ? <Debugger newAuthor={newAuthor} authors={authors} /> : ""}
+        {isDebug ? <Debugger newArtist={newArtist} artists={artists} /> : ""}
       </div>
     </div>
   );
 }
 
-AuthorPage.propTypes = {
-  authors: PropTypes.array,
+ArtistPage.propTypes = {
+  artists: PropTypes.array,
   isLoading: PropTypes.bool.isRequired,
-  loadAuthors: PropTypes.func.isRequired,
-  saveAuthor: PropTypes.func.isRequired,
-  deleteAuthor: PropTypes.func.isRequired,
+  loadArtists: PropTypes.func.isRequired,
+  saveArtist: PropTypes.func.isRequired,
+  deleteArtist: PropTypes.func.isRequired,
   showInfo: PropTypes.func.isRequired,
   showError: PropTypes.func.isRequired,
   dismissInfo: PropTypes.func.isRequired,
@@ -280,18 +280,18 @@ AuthorPage.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    authors: state.authors,
+    artists: state.artists,
     isLoading: state.apiStatus.count > 0,
   };
 }
 
 const mapDispatchToProps = {
-  loadAuthors,
-  saveAuthor,
-  deleteAuthor,
+  loadArtists,
+  saveArtist,
+  deleteArtist,
   showInfo,
   showError,
   dismissInfo,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AuthorPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ArtistPage);

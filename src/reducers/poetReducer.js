@@ -13,7 +13,7 @@ export default function poetReducer(state = initialState.poets, action) {
         poet.id === action.poet.id ? action.poet : poet
       );
     case types.DELETE_POET_SUCCESS:
-      return state.filter((poet) => poet.id !== action.poet.id);
+      return state.filter((poet) => poet.id !== action.id);
     default:
       return state;
   }

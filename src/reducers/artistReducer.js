@@ -13,7 +13,7 @@ export default function artistReducer(state = initialState.artists, action) {
         artist.id === action.artist.id ? action.artist : artist
       );
     case types.DELETE_ARTIST_SUCCESS:
-      return state.filter((artist) => artist.id !== action.artist.id);
+      return state.filter((artist) => artist.id !== action.id);
     default:
       return state;
   }
