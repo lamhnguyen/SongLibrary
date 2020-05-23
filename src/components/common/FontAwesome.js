@@ -15,6 +15,8 @@ import {
   faArrowUp,
   faPrint,
   faFont,
+  faSave,
+  faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -32,5 +34,7 @@ library.add(
   faArrowDown,
   faArrowUp,
   faPrint,
-  faFont
+  faFont,
+  faSave,
+  faCheck
 );

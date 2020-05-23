@@ -1,20 +1,25 @@
 /* eslint-disable react/jsx-key */
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { useTable, useFilters, useSortBy, usePagination } from "react-table";
+import {
+  useTable,
+  useFilters,
+  useSortBy,
+  usePagination,
+  useBlockLayout,
+} from "react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Table.css";
 
-export default function Table({ columns, data, onChange, skipPageReset }) {
-  const [filterInput, setFilterInput] = useState("");
-
+export default function Table({ columns, data, dataFilters, skipPageReset }) {
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
+    // footerGroups,
     page,
     prepareRow,
-    setFilter,
+    setAllFilters,
     canPreviousPage,
     canNextPage,
     pageOptions,
@@ -28,32 +33,28 @@ export default function Table({ columns, data, onChange, skipPageReset }) {
     {
       columns,
       data,
-      onChange,
       autoResetPage: !skipPageReset,
-      autoResetSelectedRows: !skipPageReset,
       disableMultiSort: true,
     },
     useFilters,
     useSortBy,
-    usePagination
+    usePagination,
+    useBlockLayout
   );
 
-  const handleFilterChange = (e) => {
-    const value = e.target.value || undefined;
-    setFilter("name", value);
-    setFilterInput(value);
-  };
+  // Page loaded
+  useEffect(() => {}, []);
+
+  // Filters changed
+  useEffect(() => {
+    if (dataFilters) {
+      setAllFilters(dataFilters);
+    }
+  }, [dataFilters]);
 
   return (
-    <div className="container">
-      <div className="row">
-        <input
-          value={filterInput}
-          onChange={handleFilterChange}
-          placeholder={"Filter name"}
-        />
-      </div>
-      <div className="row pt-2">
+    <div>
+      <div>
         <table {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -93,21 +94,28 @@ export default function Table({ columns, data, onChange, skipPageReset }) {
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
                     return (
-                      <td {...cell.getCellProps()}>
-                        {cell.render("Cell", {
-                          editable: cell.column.editable,
-                        })}
-                      </td>
+                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
                     );
                   })}
                 </tr>
               );
             })}
           </tbody>
+          <tfoot>
+            {headerGroups.map((group) => (
+              <tr {...group.getHeaderGroupProps()}>
+                {group.headers.map((column) => (
+                  <td {...column.getHeaderProps()}>
+                    {column.render("Footer")}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tfoot>
         </table>
       </div>
       {/* Pagination */}
-      <div className="row justify-content-between pt-2">
+      <div className="d-flex justify-content-between pt-2">
         <div>
           <ul className="pagination pl-0">
             <li className={"page-item" + (!canPreviousPage ? " disabled" : "")}>
@@ -134,7 +142,7 @@ export default function Table({ columns, data, onChange, skipPageReset }) {
                 Previous
               </a>
             </li>
-            <span className="pt-2 px-2">Page</span>
+            <span className="pt-2 px-2">Page: </span>
             <input
               type="number"
               min={1}
@@ -171,34 +179,24 @@ export default function Table({ columns, data, onChange, skipPageReset }) {
                 Last
               </a>
             </li>
+            <span className="pt-2 px-2">Page Size: </span>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+              }}
+            >
+              <option value="1">1</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
           </ul>
-        </div>
-        <div>
-          <form className="form-inline">
-            <div className="form-group mb-2">
-              <label className="pr-1" htmlFor="inputPageSize">
-                Items Per Page
-              </label>
-              <select
-                value={pageSize}
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value));
-                }}
-                className="form-control form-control-sm"
-                id="inputPageSize"
-              >
-                <option value="1">1</option>
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-            </div>
-          </form>
         </div>
       </div>
       {/* Debugging */}
-      <div className="row">
+      <div>
         <pre>
           <code>
             {JSON.stringify(
@@ -225,5 +223,6 @@ export default function Table({ columns, data, onChange, skipPageReset }) {
 Table.propTypes = {
   columns: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
-  onChange: PropTypes.func.isRequired,
+  dataFilters: PropTypes.array.isRequired,
+  skipPageReset: PropTypes.bool.isRequired,
 };

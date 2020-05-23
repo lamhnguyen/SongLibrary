@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-key */
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
@@ -28,7 +27,14 @@ export default function EditableCell({
     return `${initialValue}`;
   }
 
-  return <input value={value} onChange={handleChange} onBlur={handleBlur} />;
+  return (
+    <input
+      value={value}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      style={{ width: "100%" }}
+    />
+  );
 }
 
 EditableCell.propTypes = {

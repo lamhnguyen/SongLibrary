@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React, { useEffect, useMemo, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -14,6 +15,14 @@ import { showInfo, showError, dismissInfo } from "../../actions/alertActions";
 import { getErrorMessage } from "../../api/apiHelper";
 import { isEmpty } from "../../core/helper";
 
+const FILTER_COLUMN = "name";
+
+const NewAuthor = {
+  id: null,
+  name: "",
+  slug: "",
+};
+
 export function AuthorPage({
   isLoading,
   loadAuthors,
@@ -25,8 +34,29 @@ export function AuthorPage({
   ...props
 }) {
   const [skipPageReset, setSkipPageReset] = useState(false);
+  const [filter, setFilter] = useState({ id: FILTER_COLUMN, value: "" });
   const [authors, setAuthors] = useState(null);
   const [errors, setErrors] = useState({});
+  const [newAuthor, setNewAuthor] = useState(null);
+
+  // Page load
+  useEffect(() => {
+    setNewAuthor(createNewAuthor());
+
+    if (!props.authors) loadAuthors();
+  }, []);
+
+  // Authors changed
+  useEffect(() => {
+    if (!authors && props.authors) {
+      setAuthors(props.authors.map((a) => createAuthor(a)));
+    }
+  }, [props.authors]);
+
+  // After data chagnes, we turn the flag back off so that if data actually changes when we're not  editing it, the page is reset
+  useEffect(() => {
+    setSkipPageReset(false);
+  }, [authors]);
 
   function isValid(author) {
     const { name } = author;
@@ -41,8 +71,39 @@ export function AuthorPage({
     return isEmpty(errors);
   }
 
+  const createNewAuthor = () => {
+    return {
+      ...NewAuthor,
+      isEditing: true,
+      original: NewAuthor,
+    };
+  };
+
+  const createAuthor = (original) => {
+    return {
+      ...original,
+      isEditing: false,
+      original,
+    };
+  };
+
+  const getAuthorData = (author) => {
+    const data = { ...author };
+
+    delete data["isEditing"];
+    delete data["original"];
+
+    return data;
+  };
+
+  const addAuthor = (author) => {
+    authors.push(author);
+  };
+
   const updateAuthor = (author) => {
-    setAuthors(authors.map((a) => (a.id === author.id ? author : a)));
+    if (!author.id) {
+      setNewAuthor(author);
+    } else setAuthors(authors.map((a) => (a.id === author.id ? author : a)));
   };
 
   const handleChange = (author, name, value) => {
@@ -57,14 +118,24 @@ export function AuthorPage({
   };
 
   const handleCancel = (author) => {
-    updateAuthor({ ...author.original, isEditing: false });
+    if (!author.id) setNewAuthor(createNewAuthor());
+    else {
+      setSkipPageReset(true);
+      updateAuthor(createAuthor(author.original));
+    }
   };
 
   const handleSave = (author) => {
     if (!isValid(author)) return;
 
-    saveAuthor(author, true)
-      .then(() => {
+    saveAuthor(getAuthorData(author), true)
+      .then((savedAuthor) => {
+        if (author.id) updateAuthor(createAuthor(savedAuthor));
+        else {
+          addAuthor(createAuthor(savedAuthor));
+          setNewAuthor(createNewAuthor());
+        }
+
         showInfo("Data has been saved successfully");
         setTimeout(() => {
           dismissInfo();
@@ -73,12 +144,6 @@ export function AuthorPage({
       .catch((error) => {
         showError(getErrorMessage(error));
       });
-
-    setAuthors(
-      authors.map((a) =>
-        a.id === author.id ? { ...a, isEditing: false, original: a } : a
-      )
-    );
   };
 
   const handleDelete = (author) => {
@@ -97,76 +162,75 @@ export function AuthorPage({
   };
 
   const getActionsCellProps = ({ row }) => {
-    if (!row) return {};
+    return createActionsCellProps(row.original);
+  };
 
-    const author = row.original;
-    const actionProps = {
-      isEditing: author.isEditing,
+  const getNewActionsCellProps = (newAuthor) => {
+    return createActionsCellProps(newAuthor);
+  };
+
+  const createActionsCellProps = (author) => {
+    const actionsProps = {
+      isEditing: isEditing(author),
       onEdit: () => handleEdit(author),
       onSave: () => handleSave(author),
       onCancel: () => handleCancel(author),
       onDelete: () => handleDelete(author),
     };
-
-    return actionProps;
+    return actionsProps;
   };
 
   const getEditableCellProps = ({ row, column, value }) => {
-    if (!row || !column) return {};
-
-    const author = row.original;
-    const actionProps = {
-      isEditing: author.isEditing,
-      value,
-      onChange: (value) => handleChange(author, column.id, value),
-    };
-
-    return actionProps;
+    return createEditableCellProps(row.original, column.id, value);
   };
+
+  const getNewEditableCellProps = (newAuthor, name) => {
+    return createEditableCellProps(newAuthor, name, newAuthor[name]);
+  };
+
+  const createEditableCellProps = (author, name, value) => {
+    const editableProps = {
+      isEditing: isEditing(author),
+      value,
+      onChange: (value) => handleChange(author, name, value),
+    };
+    return editableProps;
+  };
+
+  const isEditing = (author) => !author.id || author.isEditing;
 
   const columns = useMemo(() => [
     {
       Header: "Name",
       accessor: "name",
-      // eslint-disable-next-line react/display-name, react/prop-types
+      width: 300,
       Cell: (props) => <EditableCell {...getEditableCellProps(props)} />,
+      Footer: (props) => (
+        <EditableCell
+          // eslint-disable-next-line react/prop-types
+          {...getNewEditableCellProps(newAuthor, props.column.id)}
+        />
+      ),
     },
     {
       Header: "Slug",
       accessor: "slug",
+      width: 300,
       disableSortBy: true,
     },
     {
       Header: "Actions",
-      maxWidth: 10,
-      // eslint-disable-next-line react/display-name, react/prop-types
-      Cell: (props) => <ActionsCell {...getActionsCellProps(props)} />,
+      width: 90,
       disableSortBy: true,
+      Cell: (props) => <ActionsCell {...getActionsCellProps(props)} />,
+      Footer: () => <ActionsCell {...getNewActionsCellProps(newAuthor)} />,
     },
   ]);
 
-  // Page load
-  useEffect(() => {
-    if (!props.authors) loadAuthors();
-  }, []);
-
-  // Authors loaded
-  useEffect(() => {
-    if (!authors && props.authors) {
-      setAuthors(
-        props.authors.map((a) => ({
-          ...a,
-          isEditing: false,
-          original: a,
-        }))
-      );
-    }
-  }, [props.authors]);
-
-  // After data chagnes, we turn the flag back off so that if data actually changes when we're not  editing it, the page is reset
-  useEffect(() => {
-    setSkipPageReset(false);
-  }, [authors]);
+  const handleFilterChange = (e) => {
+    const value = e.target.value || "";
+    setFilter({ id: FILTER_COLUMN, value });
+  };
 
   if (isLoading || !authors)
     return (
@@ -186,12 +250,47 @@ export function AuthorPage({
           </ul>
         </div>
       )}
-      <Table
-        columns={columns}
-        data={authors}
-        onChange={handleChange}
-        skipPageReset={skipPageReset}
-      />
+      <div>
+        <form>
+          <div className="form-group row">
+            <label htmlFor="inputFilter" className="col-sm-1 col-form-label">
+              Filter:
+            </label>
+            <div className="col-sm-4">
+              <input
+                value={filter.value}
+                onChange={handleFilterChange}
+                placeholder={"Author Name"}
+                className="form-control"
+                id="inputFilter"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div className="">
+        <Table
+          columns={columns}
+          data={authors}
+          dataFilters={[filter]}
+          skipPageReset={skipPageReset}
+        />
+      </div>
+      {/* Debugging */}
+      <div>
+        <pre>
+          <code>
+            {JSON.stringify(
+              {
+                newAuthor,
+                authors,
+              },
+              null,
+              2
+            )}
+          </code>
+        </pre>
+      </div>
     </div>
   );
 }

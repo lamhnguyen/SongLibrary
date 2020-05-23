@@ -16,6 +16,8 @@ export function asyncAction(
         if (!Array.isArray(result) && isEmpty(result))
           dispatch(successAction(...args));
         else dispatch(successAction(result, ...args));
+
+        return result;
       })
       .catch((error) => {
         var message = error.message || error;
