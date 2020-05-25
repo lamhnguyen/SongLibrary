@@ -49,5 +49,21 @@ function update(db, name, data) {
   return resource;
 }
 
+function find(db, name, predicate) {
+  const chain = db.get(name);
+
+  const resource = chain.find((obj) => predicate(obj)).value();
+  return resource;
+}
+
 // Using CommonJS style export so we can consume via Node (without using Babel-node)
-module.exports = { get, getBy, getById, getByIds, getBySlug, insert, update };
+module.exports = {
+  get,
+  getBy,
+  getById,
+  getByIds,
+  getBySlug,
+  find,
+  insert,
+  update,
+};

@@ -37,68 +37,47 @@ export const Header = ({ search, changeSongSearch, createSong }) => {
   }
 
   return (
-    <nav className="navbar navbar-expand-xl navbar-light bg-light sticky-top">
+    <nav className="navbar navbar-expand-md navbar-light bg-light sticky-top">
       <div className="container">
         <Link to="/" className="navbar-brand" onClick={resetApp}>
           <h3>Song Library</h3>
         </Link>
-        <div className="navbar-collapse" id="navBarMenu">
-          <ul className="navbar-nav mr-auto pr-4">
+        <div className="navbar-collapse">
+          <ul className="navbar-nav ml-auto pr-4">
             {isAuthenticated && isAdmin && (
               <li className="nav-item dropdown">
-                <a
-                  className="nav-link dropdown-toggle"
-                  href="#"
-                  id="menuAdmin"
-                  role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
+                <a className="nav-link dropdown-toggle" href="#" role="button">
                   <FontAwesomeIcon icon="edit" />
                   <span className="px-1">Admin</span>
                 </a>
-                <div className="dropdown-menu m-0" aria-labelledby="menuAdmin">
+                <div className="dropdown-menu m-0">
                   <Link
                     to="/Song"
                     className="dropdown-item"
-                    rel="nofollow"
                     onClick={createSong}
                   >
                     Add Song
                   </Link>
-                  <Link to="/Author" className="dropdown-item" rel="nofollow">
+                  <Link to="/Author" className="dropdown-item">
                     Manage Authors
                   </Link>
-                  <Link to="/Poet" className="dropdown-item" rel="nofollow">
+                  <Link to="/Poet" className="dropdown-item">
                     Manage Poets
                   </Link>
-                  <Link to="/Artist" className="dropdown-item" rel="nofollow">
+                  <Link to="/Artist" className="dropdown-item">
                     Manage Artists
                   </Link>
                 </div>
               </li>
             )}
-            <li className="nav-item dropdown">
-              <a
-                className="nav-link dropdown-toggle"
-                href="#"
-                id="menuUser"
-                role="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
+            <li className="nav-item dropdown active">
+              <a className="nav-link dropdown-toggle" href="#" role="button">
                 <FontAwesomeIcon icon="user" />
                 <span className="px-1">{isAuthenticated && name}</span>
               </a>
-              <div className="dropdown-menu m-0" aria-labelledby="menuUser">
+              <div className="dropdown-menu m-0">
                 {isAuthenticated === false && (
-                  <a
-                    className="dropdown-item"
-                    rel="nofollow"
-                    onClick={(e) => handleLogIn(e)}
-                  >
+                  <a className="dropdown-item" onClick={(e) => handleLogIn(e)}>
                     Log in
                   </a>
                 )}
@@ -106,7 +85,6 @@ export const Header = ({ search, changeSongSearch, createSong }) => {
                   <a
                     className="dropdown-item"
                     to="#"
-                    rel="nofollow"
                     onClick={(e) => handleLogOut(e)}
                   >
                     Log out

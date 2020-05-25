@@ -1,6 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import Debugger from "./Debugger";
+
+const ListItem = ({ text, isEnabled, isActive, onClick }) => {
+  return (
+    <li
+      className={
+        "page-item" +
+        (isEnabled ? "" : " disabled") +
+        (isActive ? " active" : "")
+      }
+    >
+      <Link
+        to=""
+        className="page-link"
+        onClick={() => onClick(0)}
+        style={{ cursor: "pointer" }}
+      >
+        {text}
+      </Link>
+    </li>
+  );
+};
 
 function createPager(start, totalCount, pageSize) {
   var totalPageCount = Math.ceil(totalCount / pageSize);
@@ -47,6 +70,8 @@ function createPager(start, totalCount, pageSize) {
     selectedPage,
     pageSize,
     pages,
+    canNextPage: selectedPage < totalPageCount - 1,
+    canPreviousPage: selectedPage > 0,
   };
 }
 
@@ -57,13 +82,9 @@ const Pagination = ({
   onChangePage,
   onChangePageSize,
 }) => {
+  const [isDebug] = useState(false);
+
   const pager = createPager(start, totalCount, pageSize);
-
-  function handleClickPage(start, e) {
-    e.preventDefault();
-
-    onChangePage(start);
-  }
 
   function handleSelectPageSize(pageSize, e) {
     e.preventDefault();
@@ -73,112 +94,88 @@ const Pagination = ({
 
   return (
     <>
-      <div>
-        <ul className="pagination">
-          <li
-            className={
-              "page-item" + (pager.selectedPage === 0 ? " disabled" : "")
-            }
-          >
-            <a
-              className="page-link"
-              onClick={(e) => handleClickPage(0, e)}
-              style={{ cursor: "pointer" }}
-            >
-              First
-            </a>
-          </li>
-          <li
-            className={
-              "page-item" + (pager.selectedPage === 0 ? " disabled" : "")
-            }
-          >
-            <a
-              className="page-link"
-              onClick={(e) =>
-                handleClickPage((pager.selectedPage - 1) * pager.pageSize, e)
-              }
-              style={{ cursor: "pointer" }}
-            >
-              Previous
-            </a>
-          </li>
-          {pager.pages.map((page, index) => {
-            return (
-              <li
-                key={index}
-                className={"page-item" + (page.isSelected ? " active" : "")}
-              >
-                <a
-                  className="page-link"
-                  onClick={(e) => handleClickPage(page.start, e)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {page.index + 1}
-                </a>
-              </li>
-            );
-          })}
-          <li
-            className={
-              "page-item" +
-              (pager.selectedPage === pager.totalPageCount - 1
-                ? " disabled"
-                : "")
-            }
-          >
-            <a
-              className="page-link"
-              onClick={(e) =>
-                handleClickPage((pager.selectedPage + 1) * pager.pageSize, e)
-              }
-              style={{ cursor: "pointer" }}
-            >
-              Next
-            </a>
-          </li>
-          <li
-            className={
-              "page-item" +
-              (pager.selectedPage === pager.totalPageCount - 1
-                ? " disabled"
-                : "")
-            }
-          >
-            <a
-              className="page-link"
-              onClick={(e) =>
-                handleClickPage((pager.totalPageCount - 1) * pager.pageSize, e)
-              }
-            >
-              Last
-            </a>
-          </li>
-        </ul>
-      </div>
-      <div>
-        <form className="form-inline">
-          <div className="form-group mb-2">
-            <label className="pr-1" htmlFor="inputPageSize">
-              Items Per Page
-            </label>
-            <select
-              value={pageSize}
-              onChange={(e) => handleSelectPageSize(e.target.value, e)}
-              className="form-control form-control-sm"
-              id="inputPageSize"
-            >
-              <option value="1">1</option>
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
+      <div className="container">
+        <div className="row d-flex justify-content-between">
+          <div>
+            <ul className="pagination p-0">
+              <ListItem
+                text="First"
+                isEnabled={pager.canPreviousPage}
+                isActive={false}
+                onClick={() => onChangePage(0)}
+              />
+              <ListItem
+                text="Previous"
+                isEnabled={pager.canPreviousPage}
+                isActive={false}
+                onClick={() =>
+                  onChangePage((pager.selectedPage - 1) * pager.pageSize)
+                }
+              />
+              {pager.pages.map((page, index) => {
+                return (
+                  <ListItem
+                    key={index}
+                    text={(page.index + 1).toString(10)}
+                    isEnabled={true}
+                    isActive={page.isSelected}
+                    onClick={() => onChangePage(page.start)}
+                  />
+                );
+              })}
+              <ListItem
+                text="Next"
+                isEnabled={pager.canNextPage}
+                isActive={false}
+                onClick={() =>
+                  onChangePage((pager.selectedPage + 1) * pager.pageSize)
+                }
+              />
+              <ListItem
+                text="Last"
+                isEnabled={pager.canNextPage}
+                isActive={false}
+                onClick={() =>
+                  onChangePage((pager.totalPageCount - 1) * pager.pageSize)
+                }
+              />
+            </ul>
           </div>
-        </form>
+          <div>
+            <form className="form-inline">
+              <div className="form-group mb-2">
+                <label className="pr-2" htmlFor="inputPageSize">
+                  Items Per Page:
+                </label>
+                <select
+                  value={pageSize}
+                  onChange={(e) => handleSelectPageSize(e.target.value, e)}
+                  className="form-control form-control-sm"
+                  id="inputPageSize"
+                >
+                  <option value="1">1</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div className="row">
+          <div>{isDebug ? <Debugger pager={pager} /> : ""}</div>
+        </div>
       </div>
     </>
   );
+};
+
+ListItem.propTypes = {
+  text: PropTypes.string.isRequired,
+  isEnabled: PropTypes.bool.isRequired,
+  isActive: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 Pagination.propTypes = {

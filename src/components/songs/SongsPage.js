@@ -185,7 +185,7 @@ export function SongsPage({
             onDeleteSong={handleDeleteSong}
           />
         </div>
-        <div className="row d-flex justify-content-between">
+        <div className="row">
           <Pagination
             start={filter.start}
             pageSize={filter.pageSize}

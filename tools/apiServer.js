@@ -95,6 +95,9 @@ server.put("/authors/:id", (req, res, next) =>
 server.post("/authors/", (req, res, next) =>
   handleSave(req, res, next, validateAuthor, updateAuthor)
 );
+server.delete("/authors/:id", (req, res, next) =>
+  handleDelete(req, res, next, canDeleteAuthor)
+);
 
 server.put("/poets/:id", (req, res, next) =>
   handleSave(req, res, next, validatePoet, updatePoet)
@@ -102,12 +105,18 @@ server.put("/poets/:id", (req, res, next) =>
 server.post("/poets/", (req, res, next) =>
   handleSave(req, res, next, validatePoet, updatePoet)
 );
+server.delete("/poets/:id", (req, res, next) =>
+  handleDelete(req, res, next, canDeletePoet)
+);
 
 server.put("/artists/:id", (req, res, next) =>
   handleSave(req, res, next, validateArtist, updateArtist)
 );
 server.post("/artists/", (req, res, next) =>
   handleSave(req, res, next, validateArtist, updateArtist)
+);
+server.delete("/artists/:id", (req, res, next) =>
+  handleDelete(req, res, next, canDeleteArtist)
 );
 
 server.put("/genres/:id", (req, res, next) =>
@@ -154,15 +163,26 @@ server.listen(port, () => {
 });
 
 // Helpers
-function handleSave(req, res, next, validate, update) {
+function handleSave(req, res, next, validate, doUpdate) {
   let obj = req.body;
   const error = validate(obj);
   if (error) {
     res.status(400).send(error);
   } else {
-    if (update) obj = update(obj);
+    if (doUpdate) obj = doUpdate(obj);
 
     next();
+  }
+}
+
+function handleDelete(req, res, next, canDelete, doDelete) {
+  const id = parseInt(req.params.id);
+  const error = canDelete(id);
+  if (error) {
+    res.status(400).send(error);
+  } else {
+    if (doDelete) doDelete(id);
+    else next();
   }
 }
 
@@ -172,13 +192,38 @@ function validateAuthor(author) {
   return "";
 }
 
+function canDeleteAuthor(authorId) {
+  const db = router.db;
+  const song = dbHelper.find(db, "songs", (s) =>
+    s.authorIds.includes(authorId)
+  );
+  if (song) return "Author is being used.";
+  return "";
+}
+
 function validatePoet(poet) {
   if (!poet.name) return "Name is required.";
   return "";
 }
 
+function canDeletePoet(poetId) {
+  const db = router.db;
+  const song = dbHelper.find(db, "songs", (s) => s.poetIds.includes(poetId));
+  if (song) return "Poet is being used.";
+  return "";
+}
+
 function validateArtist(artist) {
   if (!artist.name) return "Name is required.";
+  return "";
+}
+
+function canDeleteArtist(artistId) {
+  const db = router.db;
+  const song = dbHelper.find(db, "songs", (s) =>
+    s.artistIds.includes(artistId)
+  );
+  if (song) return "Artist is being used.";
   return "";
 }
 
