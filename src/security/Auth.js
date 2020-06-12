@@ -126,7 +126,10 @@ export default class Auth {
   };
 
   isAdmin = () => {
-    return this.userHasRoles([ROLE_ADMIN]);
+    // return this.userHasRoles([ROLE_ADMIN]);
+
+    // TODO: temporarily allows everyone to have Admin role
+    return true;
   };
 
   getScopes = () => {
