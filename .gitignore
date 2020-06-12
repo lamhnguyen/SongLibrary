@@ -39,5 +39,5 @@ build
 db.json
 
 # Environment
-.env.dev
+# .env.dev
 .env.prod

@@ -1,5 +1,5 @@
 import { createStore } from "redux";
-import rootReducer from "./reducers";
+import { rootReducer } from "../reducers";
 import initialState from "./initialState";
 
 it("should pass", () => {
